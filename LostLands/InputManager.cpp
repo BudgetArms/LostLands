@@ -6,8 +6,6 @@
 #include "LevelManager.h"
 
 
-
-
 InputManager::InputManager()
 {
     std::cout << "Created InputManager" << "\n";
@@ -23,6 +21,7 @@ InputManager::InputManager()
         { SDLK_d, false },
         { SDLK_k, false },
         { SDLK_r, false },
+        { SDLK_p, false },
         { SDLK_0, false },
         { SDLK_1, false },
         { SDLK_2, false },
@@ -88,6 +87,9 @@ void InputManager::ManageKeyUp(const SDL_KeyboardEvent& event)
     //std::cout << "KEYUP event: " << event.keysym.sym << std::endl;
     if (m_KeysDownMap.count(event.keysym.sym))
         m_KeysDownMap[event.keysym.sym] = false;
+
+    if (event.keysym.sym == SDLK_p)
+        LevelManager::GetInstance().SkipLevel();
 
 }
 

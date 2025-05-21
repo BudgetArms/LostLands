@@ -13,7 +13,7 @@ public:
     void OnCollision(Character* character);
 
 
-    Point2f getPosition() const { return Point2f(m_HitBox.left, m_HitBox.bottom); }
+    Point2f GetPosition() const { return Point2f(m_HitBox.left, m_HitBox.bottom); }
     Rectf GetHitBox() const { return m_HitBox; }
 
     bool GetActive() const { return m_bIsActive; }

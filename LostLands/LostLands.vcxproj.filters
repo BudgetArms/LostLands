@@ -57,6 +57,9 @@
     <ClCompile Include="SpeedPad.cpp">
       <Filter>Game FIles</Filter>
     </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>Game FIles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="SpeedPad.h">
       <Filter>Game FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>StartFiles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

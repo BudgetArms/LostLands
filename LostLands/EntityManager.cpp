@@ -9,6 +9,7 @@
 #include "Character.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Wall.h"
 
 
 
@@ -36,6 +37,9 @@ void EntityManager::Draw() const
 
     for (auto& uSpeedPad : m_SpeedPads)
         uSpeedPad->Draw();
+
+    for (auto& uWall : m_Walls)
+        uWall->Draw();
 
 
 
@@ -69,6 +73,8 @@ void EntityManager::Update(float elapsedSec)
     HandleSpeedPadCollisions();
     HandleCharacterCollisions();
 
+    for (auto& uWall : m_Walls)
+        uWall->HandleCollisions(*m_Player);
 
     LateUpdate();
 
@@ -123,6 +129,12 @@ void EntityManager::SpawnShootingEnemy(const Point2f& position)
 void EntityManager::SpawnEnemySpawner(const Point2f& position)
 {
     //m_Entities.emplace_back(std::make_unique<EnemySpawner>(position, 0.3f));
+}
+
+
+void EntityManager::SpawnWall(const Rectf& area)
+{
+    m_Walls.emplace_back(std::make_unique<Wall>(area));
 }
 
 
@@ -201,7 +213,6 @@ void EntityManager::HandleCharacterCollisions()
     {
         if (utils::IsOverlapping(uEntity->GetHitBox(), playerHitBox))
         {
-            std::cout << "hittttt\n";
             const Vector2f directionAwayFromEnemy{ (m_Player->GetPosition() - uEntity->GetPosition()).Normalized() };
             m_Player->Damage(10.f);
             uEntity->Damage(10.f);

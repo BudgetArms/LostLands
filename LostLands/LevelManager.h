@@ -20,12 +20,16 @@ public:
 
 
 
+    void SkipLevel();
     void SetLevel(int level);
     void ResetLevel();
 
     bool HasPlayerFinishedLevel() const;
 
     Rectf m_WinDoor{};
+    std::unique_ptr<Texture>		m_uTextInfo;
+    const std::string& GetResourcePath() const { return m_ResourcePath; };
+
 
 private:
     friend class Singleton<LevelManager>;
@@ -33,7 +37,6 @@ private:
 
     const std::string m_ResourcePath;
 
-    std::unique_ptr<Texture>		m_uTextInfo;
     std::unique_ptr<Texture>		m_uTextWon;
     std::unique_ptr<Texture>		m_uTextDead;
 

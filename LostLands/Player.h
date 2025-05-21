@@ -30,6 +30,11 @@ public:
     void SetDashingEnabled(bool ableToDash) { m_bIsDashingEnabled = ableToDash; };
     void SetMirroringEnabled(bool ableToMirror) { m_bIsMirroringEnabled = ableToMirror; };
 
+    float GetBouncinessWalls() const { return m_BouncinessWalls; };
+    void SetBouncinessWalls(float bouncinessWalls) { m_BouncinessWalls = bouncinessWalls; };
+
+    bool IsDashing() const { return m_bIsDashing; };
+
 
 private:
     void HandleKeyboardInput(float elapsedSec);
@@ -49,23 +54,22 @@ private:
     bool m_bIsMirroringEnabled{};
 
 
-
     // dash
     bool m_bIsDashing{};
     const float m_DashSpeed{ 300.f };
     const float m_DashTime{ 1.f };
     float m_DashTimer{};
-    const float m_DashCooldown{ 5.f };
+    const float m_DashCooldown{ 4.f };
 
     // mirror
     bool m_bCanMirror{};
     float m_MirrorTimer{};
-    const float m_MirrorCooldown{ 1.f };
+    const float m_MirrorCooldown{ 5.f };
 
 
     const float m_IFramesTime{ 2.f };
     float m_IFramesCountDown{};
-    const float m_BouncinessWalls{ 2 };
+    float m_BouncinessWalls{ 2 };
 
 
 

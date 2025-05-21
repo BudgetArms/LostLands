@@ -11,6 +11,7 @@ class Bullet;
 class SpeedPad;
 class Character;
 //class Player;
+class Wall;
 
 
 class EntityManager final : public Singleton<EntityManager>
@@ -28,6 +29,7 @@ public:
     void SpawnSpeedPad(const Point2f& position, const Vector2f& direction, float speed);
     void SpawnShootingEnemy(const Point2f& position);
     void SpawnEnemySpawner(const Point2f& position);
+    void SpawnWall(const Rectf& area);
 
     std::vector<std::unique_ptr<Bullet>>& GetBullets() { return m_Bullets; };
     std::vector<std::unique_ptr<Character>>& GetEnemies() { return m_Entities; };
@@ -51,6 +53,7 @@ private:
     std::vector<std::unique_ptr<Bullet>> m_Bullets;
     std::vector<std::unique_ptr<SpeedPad>> m_SpeedPads;
     std::vector<std::unique_ptr<Character>> m_Entities;
+    std::vector<std::unique_ptr<Wall>> m_Walls;
     std::unique_ptr<Player> m_Player;
 
     bool m_bLevelComplete{ false };

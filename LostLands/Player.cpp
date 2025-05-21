@@ -3,6 +3,7 @@
 
 #include "InputManager.h"
 #include "EntityManager.h"
+#include "LevelManager.h"
 #include "Bullet.h"
 
 
@@ -211,14 +212,11 @@ void Player::HandleMouseInput(float elapsedSec)
             continue;
 
 
-
         if (pair.first == SDL_BUTTON_LEFT)
             Shoot();
 
         if (pair.first == SDL_BUTTON_RIGHT)
             Mirror();
-
-
 
     }
 

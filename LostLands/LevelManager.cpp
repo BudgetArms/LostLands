@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "LevelManager.h"
 
+#include <memory>
+
 #include "Globals.h"
 
 #include "Texture.h"
@@ -14,6 +16,9 @@
 void SetLevelTutorialDash();
 void SetLevelTutorialShooting();
 void SetLevelTutorialMirror();
+void SetLevel1();
+void SetLevel2();
+void SetLevel3();
 
 
 LevelManager::LevelManager() :
@@ -35,6 +40,7 @@ LevelManager::LevelManager() :
     m_ArrLoadLevel.push_back(SetLevelTutorialDash);
     m_ArrLoadLevel.push_back(&SetLevelTutorialShooting);
     m_ArrLoadLevel.push_back(&SetLevelTutorialMirror);
+    m_ArrLoadLevel.push_back(&SetLevel1);
 
     m_NrOfLevels = static_cast<int>(m_ArrLoadLevel.size());
 }
@@ -94,6 +100,17 @@ void LevelManager::Update(float elapsedSec)
 }
 
 
+void LevelManager::SkipLevel()
+{
+    if (m_NrCurrentLevel == m_NrOfLevels)
+        m_NrCurrentLevel = 0;
+    else
+        ++m_NrCurrentLevel;
+
+    ResetLevel();
+
+}
+
 void LevelManager::SetLevel(int level)
 {
     std::cout << "Setting Level: " << level << "\n";
@@ -119,21 +136,9 @@ void LevelManager::SetLevel(int level)
     m_uTextInfo = nullptr;
     m_ArrLoadLevel[m_NrCurrentLevel]();
 
-    switch (m_NrCurrentLevel)
-    {
-    case 0:
-        m_uTextInfo = std::make_unique<Texture>("Press Space to Dash", m_ResourcePath + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f));
-        break;
-    case 1:
-        m_uTextInfo = std::make_unique<Texture>("Press LMB to Shoot", m_ResourcePath + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f));
-        break;
-    case 2:
-        m_uTextInfo = std::make_unique<Texture>("InfoText Default", m_ResourcePath + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f));
-        break;
-    };
-
 
 }
+
 
 void LevelManager::ResetLevel()
 {
@@ -155,6 +160,7 @@ void SetLevelTutorialDash()
     auto& levelManager = LevelManager::GetInstance();
     entityManager.Reset();
 
+    levelManager.m_uTextInfo = std::make_unique<Texture>("Press Space to Dash (4 sec cooldown)", levelManager.GetResourcePath() + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f));
 
     entityManager.SpawnPlayer(Point2f(100, 250));
     entityManager.GetPlayer()->SetShootingEnabled(false);
@@ -173,18 +179,21 @@ void SetLevelTutorialDash()
 void SetLevelTutorialShooting()
 {
     EntityManager& entityManager = EntityManager::GetInstance();
+    auto& levelManager = LevelManager::GetInstance();
     entityManager.Reset();
+
+    levelManager.m_uTextInfo = std::make_unique<Texture>("Press LMB to Shoot", levelManager.GetResourcePath() + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f));
 
     entityManager.SpawnPlayer(Point2f(100, 250));
     entityManager.GetPlayer()->SetShootingEnabled(true);
     entityManager.GetPlayer()->SetDashingEnabled(true);
-    entityManager.GetPlayer()->SetMirroringEnabled(true);
+    entityManager.GetPlayer()->SetMirroringEnabled(false);
 
-    entityManager.SpawnShootingEnemy(Point2f(400, 400));
-    entityManager.SpawnShootingEnemy(Point2f(400, 400));
-    entityManager.SpawnShootingEnemy(Point2f(400, 300));
-    entityManager.SpawnShootingEnemy(Point2f(400, 200));
-    entityManager.SpawnShootingEnemy(Point2f(400, 100));
+    entityManager.SpawnEnemy(Point2f(400, 400));
+    entityManager.SpawnEnemy(Point2f(400, 400));
+    entityManager.SpawnEnemy(Point2f(400, 300));
+    entityManager.SpawnEnemy(Point2f(400, 200));
+    entityManager.SpawnEnemy(Point2f(400, 100));
 
 }
 
@@ -192,16 +201,35 @@ void SetLevelTutorialShooting()
 void SetLevelTutorialMirror()
 {
     EntityManager& entityManager = EntityManager::GetInstance();
+    auto& levelManager = LevelManager::GetInstance();
     entityManager.Reset();
+
+    levelManager.m_uTextInfo = std::make_unique<Texture>("Press RMB to Mirror (5 second cooldown)", levelManager.GetResourcePath() + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 0.5f));
 
     entityManager.SpawnPlayer(Point2f(100, 250));
     entityManager.GetPlayer()->SetShootingEnabled(true);
     entityManager.GetPlayer()->SetDashingEnabled(true);
     entityManager.GetPlayer()->SetMirroringEnabled(true);
 
-    entityManager.SpawnShootingEnemy(Point2f(300, 150));
-    entityManager.SpawnShootingEnemy(Point2f(400, 350));
-    entityManager.SpawnEnemySpawner(Point2f(500, 300));
+    entityManager.SpawnWall(Rectf(400, 30, 80, 440));
+}
+
+
+
+void SetLevel1()
+{
+    EntityManager& entityManager = EntityManager::GetInstance();
+    auto& levelManager = LevelManager::GetInstance();
+    entityManager.Reset();
+
+    levelManager.m_uTextInfo = std::make_unique<Texture>("InfoText Default", levelManager.GetResourcePath() + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f));
+
+    entityManager.SpawnPlayer(Point2f(100, 250));
+    entityManager.GetPlayer()->SetShootingEnabled(true);
+    entityManager.GetPlayer()->SetDashingEnabled(true);
+    entityManager.GetPlayer()->SetMirroringEnabled(true);
+
+    //entityManager.Spawnw
 
 }
 

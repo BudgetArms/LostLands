@@ -10,11 +10,11 @@ Enemy::Enemy(const Point2f& position) :
     Character(position)
     //m_Color{ Color4f(1.f, 0.f, 0.f, 1.f) }
 {
-    std::cout << "Enemy::Enemy: Created Enemy\n";
+    //std::cout << "Enemy::Enemy: Created Enemy\n";
     m_Color = Color4f(1.f, 0.f, 0.f, 1.f);
     m_HealthBarColor = Color4f(0.f, 0.f, 1.f, 0.8f);
-    m_Width = 10;
-    m_Height = 10;
+    m_Width = 20;
+    m_Height = 20;
     m_Speed = 100.f;
     m_MaxHealth = 100.f;
     SetHealth(m_MaxHealth);

@@ -81,8 +81,8 @@ void Game::Draw() const
     utils::SetColor(0.f, 0.f, 0.f, 1.f);
     utils::FillRect(g_SmallWindow);
 
-    LevelManager::GetInstance().Draw();
     EntityManager::GetInstance().Draw();
+    LevelManager::GetInstance().Draw();
 
 
     if (m_uFpsTexture)
