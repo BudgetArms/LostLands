@@ -35,7 +35,7 @@ public:
     float GetSpeed() const { return m_Speed; };
     void SetSpeed(float speed) { m_Speed = speed; };
 
-    void SetShootEnabled(bool ableToShoot) { m_bIsShootingEnabled = ableToShoot; };
+    void SetShootingEnabled(bool ableToShoot) { m_bIsShootingEnabled = ableToShoot; };
 
     bool IsDead() const { return m_bIsDead; };
     bool IsMarkedForDeletion() const { return m_bIsMarkedForDeletion; };
@@ -69,6 +69,8 @@ protected:
 
     bool m_bIsShootingEnabled{};
     bool m_bIsWalkingEnabled{};
+    bool m_bIsDashingEnabled{};
+    bool m_bIsMirroringEnabled{};
     bool m_bCanWalk{};
     bool m_bCanShoot{};
     bool m_bIsDead{};

@@ -72,9 +72,6 @@ void Player::Update(float elapsedSec)
     HandleWallCollisions();
 
 
-    if (!m_bIsShootingEnabled)
-        return;
-
     m_AccumulatedSecBullets += elapsedSec;
 
     if (m_AccumulatedSecBullets >= 1 / m_BulletsPerSecond)
@@ -83,6 +80,13 @@ void Player::Update(float elapsedSec)
 
         m_bCanShoot = true;
 
+    }
+
+    m_MirrorTimer += elapsedSec;
+    if (m_MirrorTimer >= m_MirrorCooldown)
+    {
+        m_MirrorTimer = 0.f;
+        m_bCanMirror = true;
     }
 
 
@@ -105,9 +109,7 @@ void Player::Damage(float damage)
 void Player::Shoot()
 {
     if (!m_bCanShoot || !m_bIsShootingEnabled)
-    {
         return;
-    }
 
     //std::cout << "Player: Shoot\n";
 
@@ -121,6 +123,17 @@ void Player::Shoot()
     EntityManager::GetInstance().SpawnBullet(*this, m_Position, directionAngle);
     m_bCanShoot = false;
 
+}
+
+void Player::Mirror()
+{
+    if (!m_bCanMirror || !m_bIsMirroringEnabled)
+        return;
+
+    std::cout << "Mirror\n";
+    m_Position = Point2f(g_Window.width - m_Position.x, g_Window.height - m_Position.y);
+
+    m_bCanMirror = false;
 }
 
 void Player::HandleKeyboardInput(float elapsedSec)
@@ -150,8 +163,8 @@ void Player::HandleKeyboardInput(float elapsedSec)
 
     if (auto it = keysDownMap.find(SDLK_SPACE); it != keysDownMap.end())
         if (it->second && m_DashTimer <= 0 && !m_bIsDashing)
-            //if (it->second && !m_bIsDashing)
             Dash();
+
 
     m_Input = m_Input.Normalized();
 
@@ -200,8 +213,10 @@ void Player::HandleMouseInput(float elapsedSec)
 
 
         if (pair.first == SDL_BUTTON_LEFT)
-            if (m_bCanShoot)
-                Shoot();
+            Shoot();
+
+        if (pair.first == SDL_BUTTON_RIGHT)
+            Mirror();
 
 
 

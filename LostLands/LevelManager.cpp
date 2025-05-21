@@ -137,6 +137,9 @@ void LevelManager::SetLevel(int level)
 
 void LevelManager::ResetLevel()
 {
+    if (m_bWonGame)
+        m_NrCurrentLevel = 0;
+
     SetLevel(m_NrCurrentLevel);
 }
 
@@ -150,19 +153,20 @@ void SetLevelTutorialDash()
 {
     auto& entityManager = EntityManager::GetInstance();
     auto& levelManager = LevelManager::GetInstance();
-
     entityManager.Reset();
 
+
     entityManager.SpawnPlayer(Point2f(100, 250));
-    entityManager.GetPlayer()->SetShootEnabled(false);
+    entityManager.GetPlayer()->SetShootingEnabled(false);
+    entityManager.GetPlayer()->SetDashingEnabled(true);
+    entityManager.GetPlayer()->SetMirroringEnabled(false);
 
-    entityManager.SpawnSpeedPad(Point2f(350, 480), Vector2f(-1, 0), 8.5f);
-    entityManager.SpawnSpeedPad(Point2f(350, 390), Vector2f(-1, 0), 8.f);
-    entityManager.SpawnSpeedPad(Point2f(350, 300), Vector2f(-1, 0), 8.f);
-    entityManager.SpawnSpeedPad(Point2f(350, 210), Vector2f(-1, 0), 8.f);
-    entityManager.SpawnSpeedPad(Point2f(350, 120), Vector2f(-1, 0), 8.f);
-    entityManager.SpawnSpeedPad(Point2f(350, 30), Vector2f(-1, 0), 8.f);
-
+    entityManager.SpawnSpeedPad(Point2f(400, 480), Vector2f(-1, 0), 8.5f);
+    entityManager.SpawnSpeedPad(Point2f(400, 390), Vector2f(-1, 0), 8.f);
+    entityManager.SpawnSpeedPad(Point2f(400, 300), Vector2f(-1, 0), 8.f);
+    entityManager.SpawnSpeedPad(Point2f(400, 210), Vector2f(-1, 0), 8.f);
+    entityManager.SpawnSpeedPad(Point2f(400, 120), Vector2f(-1, 0), 8.f);
+    entityManager.SpawnSpeedPad(Point2f(400, 30), Vector2f(-1, 0), 8.f);
 
 }
 
@@ -170,8 +174,11 @@ void SetLevelTutorialShooting()
 {
     EntityManager& entityManager = EntityManager::GetInstance();
     entityManager.Reset();
+
     entityManager.SpawnPlayer(Point2f(100, 250));
-    entityManager.GetPlayer()->SetShootEnabled(true);
+    entityManager.GetPlayer()->SetShootingEnabled(true);
+    entityManager.GetPlayer()->SetDashingEnabled(true);
+    entityManager.GetPlayer()->SetMirroringEnabled(true);
 
     entityManager.SpawnShootingEnemy(Point2f(400, 400));
     entityManager.SpawnShootingEnemy(Point2f(400, 400));
@@ -185,16 +192,16 @@ void SetLevelTutorialShooting()
 void SetLevelTutorialMirror()
 {
     EntityManager& entityManager = EntityManager::GetInstance();
-
     entityManager.Reset();
 
     entityManager.SpawnPlayer(Point2f(100, 250));
+    entityManager.GetPlayer()->SetShootingEnabled(true);
+    entityManager.GetPlayer()->SetDashingEnabled(true);
+    entityManager.GetPlayer()->SetMirroringEnabled(true);
 
     entityManager.SpawnShootingEnemy(Point2f(300, 150));
     entityManager.SpawnShootingEnemy(Point2f(400, 350));
-
     entityManager.SpawnEnemySpawner(Point2f(500, 300));
-
 
 }
 

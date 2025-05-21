@@ -160,7 +160,6 @@ void EntityManager::HandleBulletCollisions()
             {
                 if (utils::IsOverlapping(uEntity->GetHitBox(), bulletHitBox))
                 {
-                    std::cout << "HIT Enemy\n";
                     uEntity->Damage(uBullet->GetDamage());
                     uBullet->Destroy();
                 }
@@ -170,7 +169,6 @@ void EntityManager::HandleBulletCollisions()
         {
             if (utils::IsOverlapping(m_Player->GetHitBox(), bulletHitBox))
             {
-                std::cout << "Hit Player\n";
                 m_Player->Damage(uBullet->GetDamage());
                 uBullet->Destroy();
             }
@@ -187,13 +185,8 @@ void EntityManager::HandleSpeedPadCollisions()
     const Rectf& playerHitBox{ m_Player->GetHitBox() };
 
     for (auto& uSpeedPads : m_SpeedPads)
-    {
         if (utils::IsOverlapping(uSpeedPads->GetHitBox(), playerHitBox))
-        {
-            std::cout << "Speedpad\n";
             uSpeedPads->OnCollision(m_Player.get());
-        }
-    }
 
 }
 

@@ -22,10 +22,13 @@ public:
 
     virtual Rectf& GetHitBox() override;
 
-
     virtual void Damage(float damage) override;
     virtual void Shoot() override;
 
+    void Mirror();
+
+    void SetDashingEnabled(bool ableToDash) { m_bIsDashingEnabled = ableToDash; };
+    void SetMirroringEnabled(bool ableToMirror) { m_bIsMirroringEnabled = ableToMirror; };
 
 
 private:
@@ -42,20 +45,28 @@ private:
     float m_Acceleration{ 300.f };
     float m_Deceleration{ 100.f };
 
+    bool m_bIsDashingEnabled{};
+    bool m_bIsMirroringEnabled{};
+
+
+
     // dash
+    bool m_bIsDashing{};
     const float m_DashSpeed{ 300.f };
     const float m_DashTime{ 1.f };
-    float m_DashTimer{ 0 };
+    float m_DashTimer{};
     const float m_DashCooldown{ 5.f };
+
+    // mirror
+    bool m_bCanMirror{};
+    float m_MirrorTimer{};
+    const float m_MirrorCooldown{ 1.f };
 
 
     const float m_IFramesTime{ 2.f };
     float m_IFramesCountDown{};
-
-
     const float m_BouncinessWalls{ 2 };
 
-    bool m_bIsDashing{};
 
 
 protected:
