@@ -1,27 +1,29 @@
 ﻿#pragma once
+#include "utils.h"
 
 class Player;
+class Bullet;
 
-class Wall final
+class Wall
 {
 public:
     explicit Wall(const Rectf& area);
     ~Wall() = default;
 
-    void Draw() const;
+    virtual void Draw() const;
 
-    void HandleCollisions(Player& character);
+    virtual void HandleCollisions(Player& character);
+    void HandleCollisionsBullet(Bullet& bullet);
 
-    Point2f GetPosition() const { return Point2f(m_HitBox.left, m_HitBox.bottom); }
-    Rectf GetHitBox() const { return m_HitBox; }
-
-    bool GetActive() const { return m_bIsActive; }
-    void SetActive(bool active) { m_bIsActive = active; }
+    Point2f GetPosition() const { return Point2f(m_Area.left, m_Area.bottom); }
+    Rectf GetArea() const { return m_Area; }
 
 
 private:
-    Rectf m_HitBox;
-    bool m_bIsActive;
+
+
+protected:
+    Rectf m_Area;
 
 
 };

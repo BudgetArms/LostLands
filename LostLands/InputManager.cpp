@@ -1,16 +1,12 @@
 ﻿#include "pch.h"
 #include "InputManager.h"
 
-#include "utils.h"
 #include "EntityManager.h"
 #include "LevelManager.h"
 
 
 InputManager::InputManager()
 {
-    std::cout << "Created InputManager" << "\n";
-
-
     m_KeysDownMap =
     {
         { SDLK_ESCAPE, false },
@@ -41,12 +37,6 @@ InputManager::InputManager()
         { SDL_BUTTON_RIGHT, false }
     };
 
-
-}
-
-InputManager::~InputManager()
-{
-    std::cout << "Destroyed InputManager" << "\n";
 }
 
 
@@ -70,21 +60,16 @@ bool InputManager::IsGameRestart()
     return false;
 }
 
-
 void InputManager::ManageKeyDown(const SDL_KeyboardEvent& event)
 {
-    //std::cout << "KEYd event: " << event.keysym.sym << std::endl;
     if (!event.repeat)
         if (m_KeysDownMap.count(event.keysym.sym))
             m_KeysDownMap[event.keysym.sym] = true;
 
 }
 
-
-
 void InputManager::ManageKeyUp(const SDL_KeyboardEvent& event)
 {
-    //std::cout << "KEYUP event: " << event.keysym.sym << std::endl;
     if (m_KeysDownMap.count(event.keysym.sym))
         m_KeysDownMap[event.keysym.sym] = false;
 
@@ -93,10 +78,8 @@ void InputManager::ManageKeyUp(const SDL_KeyboardEvent& event)
 
 }
 
-
 void InputManager::ManageMouseDown(const SDL_MouseButtonEvent& event)
 {
-    //std::cout << "MOUSE DOWN event: ";
     switch (event.button)
     {
     case SDL_BUTTON_LEFT:
@@ -125,11 +108,8 @@ void InputManager::ManageMouseDown(const SDL_MouseButtonEvent& event)
 
 }
 
-
 void InputManager::ManageMouseUp(const SDL_MouseButtonEvent& event)
 {
-    //std::cout << "MOUSEBUTTONUP event: ";
-
     switch (event.button)
     {
     case SDL_BUTTON_LEFT:

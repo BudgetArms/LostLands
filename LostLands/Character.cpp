@@ -24,27 +24,18 @@ void Character::SetHealth(float health)
 }
 
 
-void Character::Shoot()
-{
-
-    if (m_AccumulatedSecBullets < (1.f / m_BulletsPerSecond))
-        return;
-
-    m_AccumulatedSecBullets = 0;
-
-    Bullet bullet{ *this, m_Position, 0.f };
-    //Bullet bullet{ *this, m_Position, m_DirectionAngle };
-    float directionAngle = 90.f;
-
-    EntityManager::GetInstance().SpawnBullet(*this, m_Position, directionAngle);
-}
-
 void Character::Update(float elapsedSec)
 {
     if (m_bIsDead)
     {
         m_bIsMarkedForDeletion = true;
+    }
 
+    m_AccumulatedSecBullets += elapsedSec;
+    if (m_AccumulatedSecBullets >= 1 / m_BulletsPerSecond)
+    {
+        m_AccumulatedSecBullets = 0.f;
+        m_bCanShoot = true;
     }
 }
 
@@ -62,5 +53,6 @@ void Character::Damage(float health)
     if (m_Health > m_MaxHealth)
         m_Health = m_MaxHealth;
 
-
 }
+
+

@@ -42,9 +42,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Game FIles</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Game FIles</Filter>
-    </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Game FIles</Filter>
     </ClCompile>
@@ -58,6 +55,12 @@
       <Filter>Game FIles</Filter>
     </ClCompile>
     <ClCompile Include="Wall.cpp">
+      <Filter>Game FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="WinDoor.cpp">
+      <Filter>Game FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="DeadlyWall.cpp">
       <Filter>Game FIles</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,17 +95,20 @@
     <ClInclude Include="Character.h">
       <Filter>Game FIles</Filter>
     </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Game FIles</Filter>
-    </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>Game FIles</Filter>
     </ClInclude>
     <ClInclude Include="SpeedPad.h">
       <Filter>Game FIles</Filter>
     </ClInclude>
+    <ClInclude Include="DeadlyWall.h">
+      <Filter>Game FIles</Filter>
+    </ClInclude>
     <ClInclude Include="Wall.h">
-      <Filter>StartFiles</Filter>
+      <Filter>Game FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="WinDoor.h">
+      <Filter>Game FIles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

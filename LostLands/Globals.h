@@ -1,16 +1,12 @@
 ﻿//#pragma once
-
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <string>
+#include <iostream>
+
 //#include "utils.h"
 
-#define DEBUG_MESSAGE 1
-
-#include <string.h>
-#include <string>
-
-#include <iostream>
 
 enum class Shape
 {
@@ -23,7 +19,6 @@ enum class Shape
 };
 
 
-
 extern Point2f g_StartPosition;
 
 extern Rectf g_Window;
@@ -33,5 +28,7 @@ extern Rectf g_SmallWindow;
 extern Color4f g_HitBoxesColor;
 extern bool g_bShowHitboxes;
 
+extern std::string WStringToString(const std::wstring& wstr);
 
-#endif // GLOBALS_H
+#endif
+// GLOBALS_H

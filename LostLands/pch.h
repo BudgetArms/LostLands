@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //ML Detection Extension
 #ifdef _DEBUG
@@ -28,6 +28,6 @@
 #include <iostream>
 
 
-#include "utils.h"
 #include "Globals.h"
+#include "utils.h"
 

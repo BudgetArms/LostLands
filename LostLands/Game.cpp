@@ -14,31 +14,14 @@
 #include "Texture.h"
 
 
-
 Game::Game(const Window& window) :
-    BaseGame{ window },
-    m_ResourcePath{ "" },
-    m_uFpsTexture{ nullptr },
-    m_AccumulatedSec{ 0.0f },
-    m_FPS{ 0.0f }
+    BaseGame{ window }
 {
-
-    //m_uEntityManager->AddShootingEnemy(Point2f(300, 400));
-
     LevelManager::GetInstance().Start();
-
 }
-
-Game::~Game()
-{
-    std::cout << "Nothing to clean up" << "\n";
-}
-
-
 
 void Game::Update(float elapsedSec)
 {
-
     m_AccumulatedSec += elapsedSec;
 
     LevelManager::GetInstance().Update(elapsedSec);
@@ -63,13 +46,10 @@ void Game::Update(float elapsedSec)
 
     }
 
-
 }
 
 void Game::Draw() const
 {
-
-
     ClearBackground();
     glClearColor(1.f, 1.f, 1.f, 1.f);
 
@@ -77,9 +57,9 @@ void Game::Draw() const
     utils::SetColor(1.f, 1.f, 1.f, 0.9f);
     utils::FillRect(g_Window);
 
-
     utils::SetColor(0.f, 0.f, 0.f, 1.f);
     utils::FillRect(g_SmallWindow);
+
 
     EntityManager::GetInstance().Draw();
     LevelManager::GetInstance().Draw();
@@ -88,10 +68,7 @@ void Game::Draw() const
     if (m_uFpsTexture)
         m_uFpsTexture->Draw(Point2f(700, 470));
 
-
 }
-
-
 
 void Game::ClearBackground() const
 {
@@ -100,9 +77,7 @@ void Game::ClearBackground() const
 }
 
 
-
 #pragma region Key & Mouse Events
-
 
 
 void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
@@ -132,9 +107,6 @@ void Game::ProcessMouseUpEvent(const SDL_MouseButtonEvent& e)
 }
 
 
-
 #pragma endregion
-
-
 
 

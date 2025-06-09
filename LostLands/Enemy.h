@@ -6,19 +6,15 @@ class Enemy final : public Character
 {
 public:
     Enemy(const Point2f& position);
+    Enemy() = default;
 
 
 private:
-
     void Draw() const override;
     void Update(float elapsedSec) override;
 
     Rectf& GetHitBox() override;
     virtual void Shoot() override;
-
-
-
-protected:
 
 
 };

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //ML Detection Extension
 #ifdef _DEBUG

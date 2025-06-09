@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Player.h"
 
+#include <algorithm>
+
 #include "InputManager.h"
 #include "EntityManager.h"
 #include "LevelManager.h"
@@ -10,8 +12,6 @@
 Player::Player(const Point2f& position) :
     Character(position)
 {
-    std::cout << "Created Player" << "\n";
-
     m_Color = Color4f(1.f, 1.f, 1.f, 1.f);
     m_HealthBarColor = Color4f(0.f, 1.f, 0.f, 0.8f);
     m_Width = 20;
@@ -27,13 +27,6 @@ Player::Player(const Point2f& position) :
     m_HitBox.width = m_Width;
     m_HitBox.height = m_Height;
 }
-
-Player::~Player()
-{
-    std::cout << "Destroyed Player" << "\n";
-}
-
-
 
 void Player::Draw() const
 {
@@ -58,11 +51,33 @@ void Player::Draw() const
         utils::DrawRect(hitbox);
     }
 
+    constexpr float heightOffset{ 25.f };
+    constexpr float height{ 15.f };
+    const float dashX{ 90.f };
+    const float mirrorX{ 275.f };
+
+    // draw dash cooldown
+    utils::SetColor(0.f, 0.f, 1.f, 1.f);
+    utils::FillRect(dashX, g_Window.height - heightOffset, 100 * (1 - std::clamp<float>((m_DashTimer / m_DashCooldown), 0, 1)), height);
+
+    utils::SetColor(0.f, 0.f, 0.f, 1.f);
+    utils::DrawRect(dashX, g_Window.height - heightOffset, 100, height, 2.f);
+
+    // draw teleport cooldown
+    utils::SetColor(0.f, 0.f, 1.f, 1.f);
+    utils::FillRect(mirrorX, g_Window.height - heightOffset, 100 * (1 - std::clamp<float>((m_MirrorTimer / m_MirrorCooldown), 0, 1)), height);
+
+    utils::SetColor(0.f, 0.f, 0.f, 1.f);
+    utils::DrawRect(mirrorX, g_Window.height - heightOffset, 100, height, 2.f);
+
 }
 
 void Player::Update(float elapsedSec)
 {
     Character::Update(elapsedSec);
+
+    if (m_bIsDead)
+        return;
 
     if (m_IFramesCountDown >= 0.0f)
         m_IFramesCountDown -= elapsedSec;
@@ -73,23 +88,15 @@ void Player::Update(float elapsedSec)
     HandleWallCollisions();
 
 
-    m_AccumulatedSecBullets += elapsedSec;
+    m_Velocity.x = std::clamp<float>(m_Velocity.x, -m_MaxVelocity, m_MaxVelocity);
+    m_Velocity.y = std::clamp<float>(m_Velocity.y, -m_MaxVelocity, m_MaxVelocity);
 
-    if (m_AccumulatedSecBullets >= 1 / m_BulletsPerSecond)
+    if (m_bIsMirroringEnabled)
     {
-        m_AccumulatedSecBullets = 0.f;
-
-        m_bCanShoot = true;
-
+        m_MirrorTimer -= elapsedSec;
+        if (m_MirrorTimer <= 0)
+            m_bCanMirror = true;
     }
-
-    m_MirrorTimer += elapsedSec;
-    if (m_MirrorTimer >= m_MirrorCooldown)
-    {
-        m_MirrorTimer = 0.f;
-        m_bCanMirror = true;
-    }
-
 
 }
 
@@ -112,18 +119,14 @@ void Player::Shoot()
     if (!m_bCanShoot || !m_bIsShootingEnabled)
         return;
 
-    //std::cout << "Player: Shoot\n";
-
     int x{}, y{};
     SDL_GetMouseState(&x, &y);
-
 
     y = -y + int(g_Window.height);
     const float directionAngle{ utils::g_toDegrees * atan2f(y - m_Position.y, x - m_Position.x) };
 
-    EntityManager::GetInstance().SpawnBullet(*this, m_Position, directionAngle);
+    EntityManager::GetInstance().SpawnBullet(BulletType::Player, m_Position, directionAngle);
     m_bCanShoot = false;
-
 }
 
 void Player::Mirror()
@@ -131,8 +134,8 @@ void Player::Mirror()
     if (!m_bCanMirror || !m_bIsMirroringEnabled)
         return;
 
-    std::cout << "Mirror\n";
     m_Position = Point2f(g_Window.width - m_Position.x, g_Window.height - m_Position.y);
+    m_MirrorTimer = m_MirrorCooldown;
 
     m_bCanMirror = false;
 }
@@ -179,9 +182,7 @@ void Player::HandleKeyboardInput(float elapsedSec)
     {
         if (m_Input.Length() != 0.f)
         {
-            //std::cout << "moving\n";
-            m_Velocity.x += m_Input.x * m_Acceleration * elapsedSec;
-            m_Velocity.y += m_Input.y * m_Acceleration * elapsedSec;
+            m_Velocity += m_Input * m_Acceleration * elapsedSec;
 
             if (m_Velocity.Norm() > m_Speed)
                 m_Velocity = m_Speed * m_Velocity.Normalized();
@@ -189,19 +190,11 @@ void Player::HandleKeyboardInput(float elapsedSec)
             m_Direction = m_Velocity.Normalized();
         }
         else
-        {
             Friction(elapsedSec);
-        }
 
     }
 
-    if (m_Velocity.Norm() != 0)
-    {
-        //std::cout << "Velocity, X: " << m_Velocity.x << ", Y: " << m_Velocity.y << '\n';
-        //std::cout << "Velocity: " << m_Velocity.Norm() << '\n';
-    }
     m_Position += m_Velocity * elapsedSec;
-
 }
 
 void Player::HandleMouseInput(float elapsedSec)
@@ -211,7 +204,6 @@ void Player::HandleMouseInput(float elapsedSec)
         if (pair.second == false)
             continue;
 
-
         if (pair.first == SDL_BUTTON_LEFT)
             Shoot();
 
@@ -219,7 +211,6 @@ void Player::HandleMouseInput(float elapsedSec)
             Mirror();
 
     }
-
 }
 
 void Player::Friction(float elapsedSec)
@@ -227,7 +218,6 @@ void Player::Friction(float elapsedSec)
     if (m_Velocity.Length() == 0)
         return;
 
-    //std::cout << "Friction\n";
     if (m_Velocity.x != 0)
     {
         float sign = (m_Velocity.x > 0) ? 1.0f : -1.0f;
@@ -249,68 +239,76 @@ void Player::Friction(float elapsedSec)
 
 void Player::Dash()
 {
-    //std::cout << "Dashing\n";
     m_bIsDashing = true;
     m_DashTimer = m_DashTime + m_DashCooldown;
 
     // use input, if there is input
     if (m_Input.Norm() != 0)
-    {
-        // if there is input
-        //std::cout << "Dash: Using Input\n";
         m_Velocity = m_DashSpeed * m_Input;
-    }
     else if (m_Velocity.Norm() == 0)
-    {
-        // if not moving, use the direciton
-        //std::cout << "Dash: Using Direction\n";
         m_Velocity = m_DashSpeed * m_Direction;
-    }
-
 
 }
 
 void Player::HandleWallCollisions()
 {
-    // hit left wall
-    if (m_Position.x - m_Width / 2 <= g_SmallWindow.left)
+    GetHitBox(); // to update hitbox
+    if (!(
+        (m_HitBox.left <= g_SmallWindow.left) ||
+        (m_HitBox.bottom <= g_SmallWindow.bottom) ||
+        (m_HitBox.left + m_HitBox.width >= g_SmallWindow.left + g_SmallWindow.width) ||
+        (m_HitBox.bottom + m_HitBox.height >= g_SmallWindow.bottom + g_SmallWindow.height)
+        ))
+        return;
+
+
+
+
+    if (m_HitBox.left <= g_SmallWindow.left)
     {
+        // hit left wall
         m_Position.x = g_SmallWindow.left + m_Width / 2;
+
         if (m_bIsDashing)
             m_Velocity.x *= -1;
         else
             m_Velocity.x *= -m_BouncinessWalls;
     }
-
-    // hit right wall
-    if (m_Position.x + m_Width / 2 >= g_SmallWindow.left + g_SmallWindow.width)
+    else if (m_HitBox.left + m_HitBox.width >= g_SmallWindow.left + g_SmallWindow.width)
     {
+        // hit right 
         m_Position.x = g_SmallWindow.left + g_SmallWindow.width - m_Width / 2;
+
         if (m_bIsDashing)
             m_Velocity.x *= -1;
         else
             m_Velocity.x *= -m_BouncinessWalls;
-    }
 
-    // hit bottom wall
-    if (m_Position.y - m_Height / 2 <= g_SmallWindow.bottom)
+    }
+    else if (m_HitBox.bottom <= g_SmallWindow.bottom)
     {
+        // hit bottom wall
         m_Position.y = g_SmallWindow.bottom + m_Height / 2;
-        if (m_bIsDashing)
-            m_Velocity.y *= -1;
-        else
-            m_Velocity.y *= -m_BouncinessWalls;
-    }
 
-    // hit top wall
-    if (m_Position.y + m_Height / 2 >= g_SmallWindow.bottom + g_SmallWindow.height)
-    {
-        m_Position.y = g_SmallWindow.bottom + g_SmallWindow.height - m_Height / 2;
         if (m_bIsDashing)
             m_Velocity.y *= -1;
         else
             m_Velocity.y *= -m_BouncinessWalls;
     }
+    else if (m_HitBox.bottom + m_HitBox.height >= g_SmallWindow.bottom + g_SmallWindow.height)
+    {
+        // hit top wall
+        m_Position.y = g_SmallWindow.bottom + g_SmallWindow.height - m_Height / 2;
+
+        if (m_bIsDashing)
+            m_Velocity.y *= -1;
+        else
+            m_Velocity.y *= -m_BouncinessWalls;
+    }
+    else
+        std::cout << "fucked\n";
+
 
 }
+
 

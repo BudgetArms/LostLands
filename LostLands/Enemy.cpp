@@ -4,13 +4,12 @@
 #include <iostream>
 
 #include "EntityManager.h"
+#include "Player.h"
 
 
 Enemy::Enemy(const Point2f& position) :
     Character(position)
-    //m_Color{ Color4f(1.f, 0.f, 0.f, 1.f) }
 {
-    //std::cout << "Enemy::Enemy: Created Enemy\n";
     m_Color = Color4f(1.f, 0.f, 0.f, 1.f);
     m_HealthBarColor = Color4f(0.f, 0.f, 1.f, 0.8f);
     m_Width = 20;
@@ -23,6 +22,8 @@ Enemy::Enemy(const Point2f& position) :
     m_HitBox.bottom = m_Position.y;
     m_HitBox.width = m_Width;
     m_HitBox.height = m_Height;
+
+    m_BulletsPerSecond = 1.f;
 
 
 }
@@ -59,6 +60,7 @@ void Enemy::Draw() const
 void Enemy::Update(float elapsedSec)
 {
     Character::Update(elapsedSec);
+    Shoot();
 }
 
 
@@ -82,15 +84,16 @@ void Enemy::Shoot()
     }
 
     if (player->IsDead())
-    {
-        std::cout << "Enemy::Shoot: Player is dead\n";
         return;
-    }
+
+    if (!m_bCanShoot || !m_bIsShootingEnabled)
+        return;
 
     const Point2f directionToPlayer{ (player->GetPosition() - m_Position).Normalized() };
     const float angleToPlayer{ atan2f(directionToPlayer.y, directionToPlayer.x) };
-    std::cout << "Enemy::Shoot: Angle " << angleToPlayer << '\n';
 
+    EntityManager::GetInstance().SpawnBullet(BulletType::Enemy, m_Position, utils::g_toDegrees * angleToPlayer);
+    m_bCanShoot = false;
 
 }
 

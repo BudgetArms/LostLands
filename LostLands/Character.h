@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Texture.h"
-
 
 class Character
 {
@@ -17,8 +15,6 @@ public:
 
     virtual void Draw() const = 0;
     virtual void Update(float elapsedSec);
-
-
     virtual void Damage(float health);
 
 
@@ -37,6 +33,9 @@ public:
 
     void SetShootingEnabled(bool ableToShoot) { m_bIsShootingEnabled = ableToShoot; };
 
+    float GetBulletsPerSecond() const { return m_BulletsPerSecond; };
+    void SetBulletsPerSecond(float bulletsPerSecond) { m_BulletsPerSecond = bulletsPerSecond; };
+
     bool IsDead() const { return m_bIsDead; };
     bool IsMarkedForDeletion() const { return m_bIsMarkedForDeletion; };
 
@@ -46,15 +45,12 @@ private:
 
 
 protected:
+    virtual void Shoot() {};
 
-    virtual void Shoot() = 0;
 
-    // atm no textures, too much work
-    //std::unique_ptr<Texture> m_Texture;
-
-    Point2f m_Position{};
+    Point2f m_Position;
     Vector2f m_Velocity{};
-    Vector2f m_Direction{ 1, 0 };
+    Vector2f m_Direction{ 1.f, 0.f };
     Color4f m_Color{};
     Color4f m_HealthBarColor{};
 
@@ -80,7 +76,7 @@ protected:
     const float m_DestroyDelayTime{ 0.5f };
     float m_DestroyDelayCooldown{};
 
-    const float m_BulletsPerSecond{ 2.f };
+    float m_BulletsPerSecond{ 2.f };
     float m_AccumulatedSecBullets{};
 
 

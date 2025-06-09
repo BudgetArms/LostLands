@@ -7,24 +7,24 @@
 #include "Bullet.h"
 #include "SpeedPad.h"
 #include "Character.h"
-#include "Player.h"
 #include "Enemy.h"
+#include "Player.h"
 #include "Wall.h"
-
-
+#include "DeadlyWall.h"
+#include "WinDoor.h"
 
 
 EntityManager::EntityManager() :
     m_Bullets{},
     m_SpeedPads{},
     m_Entities{},
-    m_Player{}
+    m_Walls{},
+    m_Player{},
+    m_WinDoors{}
 {
 }
 
-EntityManager::~EntityManager()
-{
-}
+EntityManager::~EntityManager() {};
 
 
 void EntityManager::Draw() const
@@ -41,6 +41,8 @@ void EntityManager::Draw() const
     for (auto& uWall : m_Walls)
         uWall->Draw();
 
+    for (auto& uWinDoor : m_WinDoors)
+        uWinDoor->Draw();
 
 
     if (m_Player)
@@ -61,6 +63,9 @@ void EntityManager::Update(float elapsedSec)
     for (auto& uBullet : m_Bullets)
         uBullet->Update(elapsedSec);
 
+    for (auto& uWinDoor : m_WinDoors)
+        uWinDoor->Update();
+
 
     // killed all enemies
     if (m_Entities.empty())
@@ -70,11 +75,15 @@ void EntityManager::Update(float elapsedSec)
 
 
     HandleBulletCollisions();
-    HandleSpeedPadCollisions();
+    HandleSpeedPadCollisions(elapsedSec);
     HandleCharacterCollisions();
 
     for (auto& uWall : m_Walls)
         uWall->HandleCollisions(*m_Player);
+
+    for (auto& uWall : m_Walls)
+        for (auto& uBullet : m_Bullets)
+            uWall->HandleCollisionsBullet(*uBullet);
 
     LateUpdate();
 
@@ -95,46 +104,80 @@ void EntityManager::LateUpdate()
             return bullet->IsMarkedForDeletion();
         });
 
-
-
 }
 
 
-void EntityManager::SpawnBullet(Character& owner, const Point2f& position, float angleDirection, float speed)
+Bullet* EntityManager::SpawnBullet(BulletType characterType, const Point2f& position, float angleDirection, float speed)
 {
-    m_Bullets.emplace_back(std::make_unique<Bullet>(owner, position, angleDirection, speed));
+    auto bullet = std::make_unique<Bullet>(characterType, position, angleDirection, speed);
+    auto pBullet = bullet.get();
+
+    m_Bullets.emplace_back(std::move(bullet));
+    return pBullet;
 }
 
-void EntityManager::SpawnPlayer(const Point2f& position)
+Player* EntityManager::SpawnPlayer(const Point2f& position)
 {
     m_Player.reset();
     m_Player = std::make_unique<Player>(position);
+    return m_Player.get();
 }
 
-void EntityManager::SpawnEnemy(const Point2f& position)
+Enemy* EntityManager::SpawnEnemy(const Point2f& position)
 {
-    m_Entities.emplace_back(std::make_unique<Enemy>(position));
+    auto enemy = std::make_unique<Enemy>(position);
+    auto pEnemy = enemy.get();
+
+    m_Entities.emplace_back(std::move(enemy));
+    return pEnemy;
 }
 
-void EntityManager::SpawnSpeedPad(const Point2f& position, const Vector2f& direction, float speed)
+SpeedPad* EntityManager::SpawnSpeedPad(const Point2f& position, const Vector2f& direction, float speed)
 {
-    m_SpeedPads.push_back(std::make_unique<SpeedPad>(Rectf(position.x, position.y, 90, 90), direction, speed));
+    auto speedPad = std::make_unique<SpeedPad>(Rectf(position.x, position.y, 90, 90), direction, speed);
+    auto pSpeedPad = speedPad.get();
+
+    m_SpeedPads.emplace_back(std::move(speedPad));
+    return pSpeedPad;
 }
 
-void EntityManager::SpawnShootingEnemy(const Point2f& position)
+Enemy* EntityManager::SpawnShootingEnemy(const Point2f& position, float bulletsPerSecond)
 {
-    m_Entities.emplace_back(std::make_unique<Enemy>(position));
+    auto enemy = std::make_unique<Enemy>(position);
+    auto pEnemy = enemy.get();
+    enemy->SetShootingEnabled(true);
+    enemy->SetBulletsPerSecond(bulletsPerSecond);
+
+    m_Entities.emplace_back(std::move(enemy));
+    return pEnemy;
 }
 
-void EntityManager::SpawnEnemySpawner(const Point2f& position)
+Wall* EntityManager::SpawnWall(const Rectf& area)
 {
-    //m_Entities.emplace_back(std::make_unique<EnemySpawner>(position, 0.3f));
+    auto wall = std::make_unique<Wall>(area);
+    auto pWall = wall.get();
+
+    m_Walls.emplace_back(std::move(wall));
+    return pWall;
 }
 
 
-void EntityManager::SpawnWall(const Rectf& area)
+DeadlyWall* EntityManager::SpawnDeadlyWall(const Rectf& area, float damage)
 {
-    m_Walls.emplace_back(std::make_unique<Wall>(area));
+    auto wall = std::make_unique<DeadlyWall>(area, damage);
+    auto pWall = wall.get();
+
+    m_Walls.emplace_back(std::move(wall));
+    return pWall;
+}
+
+WinDoor* EntityManager::SpawnWinDoor(const Rectf& area, bool needsAllEnemiesKilled)
+{
+    auto winDoor = std::make_unique<WinDoor>(area, needsAllEnemiesKilled);
+    auto pWinDoor = winDoor.get();
+
+    m_WinDoors.emplace_back(std::move(winDoor));
+    return pWinDoor;
 }
 
 
@@ -145,7 +188,8 @@ void EntityManager::Reset()
     m_Entities.clear();
     m_Bullets.clear();
     m_SpeedPads.clear();
-
+    m_Walls.clear();
+    m_WinDoors.clear();
 
     m_bLevelComplete = false;
 }
@@ -164,9 +208,13 @@ void EntityManager::HandleBulletCollisions()
 
     for (auto& uBullet : m_Bullets)
     {
+        if (uBullet->IsMarkedForDeletion())
+            return;
+
         Rectf& bulletHitBox{ uBullet->GetHitBox() };
+
         // if Player Shot the bullet, check if bullet hits enemy
-        if (dynamic_cast<Player*>(uBullet->GetOwner()))
+        if (uBullet->GetType() == BulletType::Player)
         {
             for (auto& uEntity : m_Entities)
             {
@@ -177,7 +225,7 @@ void EntityManager::HandleBulletCollisions()
                 }
             }
         }
-        else if (dynamic_cast<Enemy*>(uBullet->GetOwner()))
+        else if (uBullet->GetType() == BulletType::Enemy)
         {
             if (utils::IsOverlapping(m_Player->GetHitBox(), bulletHitBox))
             {
@@ -189,7 +237,7 @@ void EntityManager::HandleBulletCollisions()
 
 }
 
-void EntityManager::HandleSpeedPadCollisions()
+void EntityManager::HandleSpeedPadCollisions(float elapsedSec)
 {
     if (!m_Player)
         return;
@@ -198,7 +246,7 @@ void EntityManager::HandleSpeedPadCollisions()
 
     for (auto& uSpeedPads : m_SpeedPads)
         if (utils::IsOverlapping(uSpeedPads->GetHitBox(), playerHitBox))
-            uSpeedPads->OnCollision(m_Player.get());
+            uSpeedPads->OnCollision(m_Player.get(), elapsedSec);
 
 }
 
@@ -221,3 +269,5 @@ void EntityManager::HandleCharacterCollisions()
     }
 
 }
+
+

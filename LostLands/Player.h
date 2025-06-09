@@ -9,13 +9,13 @@ class Player final : public Character
 public:
 
     Player(const Point2f& position);
+    ~Player() = default;
 
-    Player(Player&) = delete;	// Copy constructor
-    Player(Player&&) = delete;	// Move constructor
-    Player operator&=(Player&) = delete;	// Copy Assignment
-    Player operator&=(Player&&) = delete;	// Move Assignment
+    Player(Player&) = delete;
+    Player(Player&&) = delete;
+    Player operator&=(Player&) = delete;
+    Player operator&=(Player&&) = delete;
 
-    ~Player();
 
     virtual void Draw() const override;
     virtual void Update(float elapsedSec) override;
@@ -47,6 +47,8 @@ private:
 
     Vector2f m_Input{};
 
+    float m_MaxVelocity{ 500 };
+
     float m_Acceleration{ 300.f };
     float m_Deceleration{ 100.f };
 
@@ -66,14 +68,11 @@ private:
     float m_MirrorTimer{};
     const float m_MirrorCooldown{ 5.f };
 
-
+    // IFrames
     const float m_IFramesTime{ 2.f };
     float m_IFramesCountDown{};
+
     float m_BouncinessWalls{ 2 };
-
-
-
-protected:
 
 
 };

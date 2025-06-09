@@ -15,7 +15,7 @@ SpeedPad::SpeedPad(const Rectf& area, const Vector2f& direction, float speedBoos
 void SpeedPad::Draw() const
 {
     // Draw the speed pad background
-    utils::SetColor(1, 0, 0, 0.1f);
+    utils::SetColor(1, 0, 0, 0.3f);
     utils::FillRect(m_HitBox);
 
     // Calculate center point of the hitbox
@@ -82,12 +82,13 @@ void SpeedPad::Draw() const
     utils::FillTriangle(arrowTip, arrowP1, arrowP2);
 }
 
-void SpeedPad::OnCollision(Character* character)
+void SpeedPad::OnCollision(Character* character, float elapsedSec)
 {
     if (!m_bIsActive)
         return;
 
     Vector2f boost{ m_Direction.x * m_SpeedBoost, m_Direction.y * m_SpeedBoost };
+    boost *= elapsedSec;
     boost += character->GetVelocity();
 
     character->SetVelocity(boost);
