@@ -9,65 +9,65 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Game FIles">
+    <Filter Include="Game Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Game FIles\Managers">
+    <Filter Include="Game Files\Managers">
       <UniqueIdentifier>{ca390f46-f49d-4a79-8da8-8e1823eca6d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>StartFiles</Filter>
     </ClCompile>
     <ClCompile Include="EntityManager.cpp">
-      <Filter>Game FIles\Managers</Filter>
+      <Filter>Game Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Game FIles\Managers</Filter>
+      <Filter>Game Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Globals.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="LevelManager.cpp">
-      <Filter>Game FIles\Managers</Filter>
+      <Filter>Game Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="SpeedPad.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="Wall.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="WinDoor.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="DeadlyWall.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="MirrorArea.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
     <ClCompile Include="MovingDeadlyWall.cpp">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,52 +75,52 @@
       <Filter>StartFiles</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="EntityManager.h">
-      <Filter>Game FIles\Managers</Filter>
+      <Filter>Game Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
-      <Filter>Game FIles\Managers</Filter>
+      <Filter>Game Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="LevelManager.h">
-      <Filter>Game FIles\Managers</Filter>
+      <Filter>Game Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="SpeedPad.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="DeadlyWall.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Wall.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="WinDoor.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="MirrorArea.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="MovingDeadlyWall.h">
-      <Filter>Game FIles</Filter>
+      <Filter>Game Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
