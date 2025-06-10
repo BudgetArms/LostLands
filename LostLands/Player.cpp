@@ -80,8 +80,6 @@ void Player::Update(float elapsedSec)
     if (m_bIsDead)
         return;
 
-    std::cout << "x: " << m_Position.x << ", Y: " << m_Position.y << '\n';
-
     if (m_IFramesCountDown >= 0.0f)
         m_IFramesCountDown -= elapsedSec;
 
