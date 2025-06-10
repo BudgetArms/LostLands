@@ -38,6 +38,7 @@ private:
     std::unique_ptr<Texture>		m_uTextWon;
     std::unique_ptr<Texture>		m_uTextDead;
 
+    std::unique_ptr<Texture>		m_uTextLevel4;
     std::unique_ptr<Texture>		m_uTextMirror;
     std::unique_ptr<Texture>		m_uTextDash;
 
@@ -48,6 +49,14 @@ private:
 
     bool m_bWonGame{ false };
     bool m_bLostGame{ false };
+
+
+    // lvl 4 specific
+    bool m_bHasDiscoveredMiddleRight{ false };
+    bool m_bHasDiscoveredMiddleCenter{ false };
+    bool m_bHasDiscoveredMiddleMirror{ false };
+    bool m_bHasDiscoveredMiddleLeft{ false };
+    bool m_bHasDiscoveredBottom{ false };
 
 
 };

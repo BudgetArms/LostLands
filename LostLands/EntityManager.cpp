@@ -11,7 +11,9 @@
 #include "Player.h"
 #include "Wall.h"
 #include "DeadlyWall.h"
+#include "MovingDeadlyWall.h"
 #include "WinDoor.h"
+#include "MirrorArea.h"
 
 
 EntityManager::EntityManager() :
@@ -44,6 +46,9 @@ void EntityManager::Draw() const
     for (auto& uWinDoor : m_WinDoors)
         uWinDoor->Draw();
 
+    for (auto& mirrorArea : m_MirrorAreas)
+        mirrorArea.Draw();
+
 
     if (m_Player)
         m_Player->Draw();
@@ -62,6 +67,10 @@ void EntityManager::Update(float elapsedSec)
 
     for (auto& uBullet : m_Bullets)
         uBullet->Update(elapsedSec);
+
+    for (auto& uWall : m_Walls)
+        if (auto* movingDeadlyWall = dynamic_cast<MovingDeadlyWall*>(uWall.get()))
+            movingDeadlyWall->Update(elapsedSec);
 
     for (auto& uWinDoor : m_WinDoors)
         uWinDoor->Update();
@@ -106,6 +115,20 @@ void EntityManager::LateUpdate()
 
 }
 
+void EntityManager::Reset()
+{
+    m_Player.reset();
+    m_Bullets.clear();
+    m_SpeedPads.clear();
+    m_Entities.clear();
+    m_Walls.clear();
+    m_WinDoors.clear();
+    m_MirrorAreas.clear();
+
+    m_bLevelComplete = false;
+}
+
+
 
 Bullet* EntityManager::SpawnBullet(BulletType characterType, const Point2f& position, float angleDirection, float speed)
 {
@@ -145,8 +168,9 @@ Enemy* EntityManager::SpawnShootingEnemy(const Point2f& position, float bulletsP
 {
     auto enemy = std::make_unique<Enemy>(position);
     auto pEnemy = enemy.get();
-    enemy->SetShootingEnabled(true);
-    enemy->SetBulletsPerSecond(bulletsPerSecond);
+    enemy->m_bIsShootingEnabled = true;
+    enemy->m_BulletsPerSecond = bulletsPerSecond;
+    enemy->m_Color = Color4f(1.f, 0.2f, 0.0f, 1.f);
 
     m_Entities.emplace_back(std::move(enemy));
     return pEnemy;
@@ -171,6 +195,15 @@ DeadlyWall* EntityManager::SpawnDeadlyWall(const Rectf& area, float damage)
     return pWall;
 }
 
+MovingDeadlyWall* EntityManager::SpawnMovingDeadlyWall(const Rectf& area, float damage, const Vector2f& direction, float speed, float range)
+{
+    auto movingDeadlyWall = std::make_unique<MovingDeadlyWall>(area, damage, direction, speed, range);
+    auto pMovingDeadlyWall = movingDeadlyWall.get();
+
+    m_Walls.emplace_back(std::move(movingDeadlyWall));
+    return pMovingDeadlyWall;
+}
+
 WinDoor* EntityManager::SpawnWinDoor(const Rectf& area, bool needsAllEnemiesKilled)
 {
     auto winDoor = std::make_unique<WinDoor>(area, needsAllEnemiesKilled);
@@ -180,19 +213,12 @@ WinDoor* EntityManager::SpawnWinDoor(const Rectf& area, bool needsAllEnemiesKill
     return pWinDoor;
 }
 
-
-
-void EntityManager::Reset()
+void EntityManager::SpawnMirrorArea(const Rectf& area)
 {
-    m_Player.reset();
-    m_Entities.clear();
-    m_Bullets.clear();
-    m_SpeedPads.clear();
-    m_Walls.clear();
-    m_WinDoors.clear();
-
-    m_bLevelComplete = false;
+    m_MirrorAreas.emplace_back(area);
 }
+
+
 
 
 
@@ -220,7 +246,7 @@ void EntityManager::HandleBulletCollisions()
             {
                 if (utils::IsOverlapping(uEntity->GetHitBox(), bulletHitBox))
                 {
-                    uEntity->Damage(uBullet->GetDamage());
+                    uEntity->Damage(uBullet->m_Damage);
                     uBullet->Destroy();
                 }
             }
@@ -229,7 +255,7 @@ void EntityManager::HandleBulletCollisions()
         {
             if (utils::IsOverlapping(m_Player->GetHitBox(), bulletHitBox))
             {
-                m_Player->Damage(uBullet->GetDamage());
+                m_Player->Damage(uBullet->m_Damage);
                 uBullet->Destroy();
             }
         }
@@ -261,10 +287,10 @@ void EntityManager::HandleCharacterCollisions()
     {
         if (utils::IsOverlapping(uEntity->GetHitBox(), playerHitBox))
         {
-            const Vector2f directionAwayFromEnemy{ (m_Player->GetPosition() - uEntity->GetPosition()).Normalized() };
+            const Vector2f directionAwayFromEnemy{ (m_Player->m_Position - uEntity->m_Position).Normalized() };
             m_Player->Damage(10.f);
             uEntity->Damage(10.f);
-            m_Player->SetVelocity(100 * directionAwayFromEnemy);
+            m_Player->m_Velocity = 100 * directionAwayFromEnemy;
         }
     }
 

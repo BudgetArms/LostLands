@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "WinDoor.h"
 
-//#include "EntityManager.h"
+#include "EntityManager.h"
 
 
 WinDoor::WinDoor(const Rectf& area, bool needsAllEnemiesKilled) :
@@ -25,8 +25,7 @@ void WinDoor::Update()
     if (!m_bNeedsAllEnemiesKilled)
         return;
 
-    if (true)
-        //if (EntityManager::GetInstance().GetEnemies().empty())
+    if (EntityManager::GetInstance().GetEnemies().empty())
         m_bIsActive = true;
     else
         m_bIsActive = false;

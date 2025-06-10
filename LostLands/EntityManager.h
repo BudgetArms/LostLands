@@ -20,7 +20,9 @@ class Enemy;
 class Player;
 class Wall;
 class DeadlyWall;
+class MovingDeadlyWall;
 class WinDoor;
+class MirrorArea;
 
 class EntityManager final : public Singleton<EntityManager>
 {
@@ -29,6 +31,7 @@ public:
     void Update(float elapsedSec);
     void LateUpdate();
 
+    void Reset();
 
     Player* SpawnPlayer(const Point2f& position);
     Enemy* SpawnEnemy(const Point2f& position);
@@ -37,15 +40,17 @@ public:
     Enemy* SpawnShootingEnemy(const Point2f& position, float bulletsPerSecond = 1.f);
     Wall* SpawnWall(const Rectf& area);
     DeadlyWall* SpawnDeadlyWall(const Rectf& area, float damage);
+    MovingDeadlyWall* SpawnMovingDeadlyWall(const Rectf& area, float damage, const Vector2f& direction, float speed, float range);
     WinDoor* SpawnWinDoor(const Rectf& area, bool needsAllEnemiesKilled);
+    void SpawnMirrorArea(const Rectf& area);
 
     std::vector<std::unique_ptr<Bullet>>& GetBullets() { return m_Bullets; };
     std::vector<std::unique_ptr<Character>>& GetEnemies() { return m_Entities; };
     std::vector<std::unique_ptr<WinDoor>>& GetWinDoors() { return m_WinDoors; };
+    const std::vector<MirrorArea>& GetMirrorAreas() const { return m_MirrorAreas; };
 
     Player* GetPlayer() const { return m_Player.get(); };
 
-    void Reset();
     bool IsLevelFinished() const;
 
     void HandleBulletCollisions();
@@ -65,6 +70,7 @@ private:
     std::vector<std::unique_ptr<Wall>> m_Walls;
     std::unique_ptr<Player> m_Player;
     std::vector<std::unique_ptr<WinDoor>> m_WinDoors;
+    std::vector<MirrorArea> m_MirrorAreas;
 
     bool m_bLevelComplete{ false };
 

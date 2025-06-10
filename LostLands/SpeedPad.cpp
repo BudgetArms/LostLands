@@ -5,10 +5,10 @@
 
 
 SpeedPad::SpeedPad(const Rectf& area, const Vector2f& direction, float speedBoost) :
-    m_HitBox{ area },
     m_Direction{ direction.Normalized() },
     m_SpeedBoost{ speedBoost },
-    m_bIsActive{ true }
+    m_bIsActive{ true },
+    m_HitBox{ area }
 {
 }
 
@@ -89,11 +89,9 @@ void SpeedPad::OnCollision(Character* character, float elapsedSec)
 
     Vector2f boost{ m_Direction.x * m_SpeedBoost, m_Direction.y * m_SpeedBoost };
     boost *= elapsedSec;
-    boost += character->GetVelocity();
+    boost += character->m_Velocity;
 
-    character->SetVelocity(boost);
-    // Character->ApplyForce(boost);
-
+    character->m_Velocity = boost;
 }
 
 

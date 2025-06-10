@@ -36,6 +36,9 @@ public:
     bool IsDashing() const { return m_bIsDashing; };
 
 
+    float m_DashTime{ 1.f };
+
+
 private:
     void HandleKeyboardInput(float elapsedSec);
     void HandleMouseInput(float elapsedSec);
@@ -59,7 +62,6 @@ private:
     // dash
     bool m_bIsDashing{};
     const float m_DashSpeed{ 300.f };
-    const float m_DashTime{ 1.f };
     float m_DashTimer{};
     const float m_DashCooldown{ 4.f };
 

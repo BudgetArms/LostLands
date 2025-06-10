@@ -13,10 +13,10 @@ public:
     virtual void Draw() const;
 
     virtual void HandleCollisions(Player& character);
-    void HandleCollisionsBullet(Bullet& bullet);
+    virtual void HandleCollisionsBullet(Bullet& bullet);
 
     Point2f GetPosition() const { return Point2f(m_Area.left, m_Area.bottom); }
-    Rectf GetArea() const { return m_Area; }
+    virtual Rectf GetArea() const { return m_Area; }
 
 
 private:

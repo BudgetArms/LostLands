@@ -2,6 +2,7 @@
 #include "DeadlyWall.h"
 
 #include "Player.h"
+#include "Bullet.h"
 
 
 DeadlyWall::DeadlyWall(const Rectf& area, float damage) :
@@ -12,25 +13,26 @@ DeadlyWall::DeadlyWall(const Rectf& area, float damage) :
 
 void DeadlyWall::Draw() const
 {
-    utils::SetColor(1, 0, 0, 0.9f);
-    utils::FillRect(m_Area);
+    utils::SetColor(1, 0, 0, 1.f);
+    utils::FillRect(GetArea());
 }
 
 void DeadlyWall::HandleCollisions(Player& player)
 {
     const Rectf& playerHitBox{ player.GetHitBox() };
-    if (!utils::IsOverlapping(playerHitBox, m_Area))
+    const Rectf area{ GetArea() };
+    if (!utils::IsOverlapping(playerHitBox, area))
         return;
 
-    Point2f playerPos{ player.GetPosition() };
-
-    Vector2f playerVelocity = player.GetVelocity();
+    Point2f playerPos{ player.m_Position };
+    Vector2f playerVelocity = player.m_Velocity;
 
     // hit left wall
-    if (playerPos.x - playerHitBox.width / 2 <= m_Area.left)
+    if (playerPos.x - playerHitBox.width / 2 <= area.left)
     {
-        playerPos.x = m_Area.left + playerHitBox.width / 2;
+        playerPos.x = area.left + playerHitBox.width / 2;
         player.Damage(m_Damage);
+
         if (player.IsDashing())
             playerVelocity.x *= -1;
         else
@@ -38,9 +40,9 @@ void DeadlyWall::HandleCollisions(Player& player)
     }
 
     // hit right wall
-    if (playerPos.x + playerHitBox.width / 2 >= m_Area.left + m_Area.width)
+    if (playerPos.x + playerHitBox.width / 2 >= area.left + area.width)
     {
-        playerPos.x = m_Area.left + m_Area.width - playerHitBox.width / 2;
+        playerPos.x = area.left + area.width - playerHitBox.width / 2;
         player.Damage(m_Damage);
 
         if (player.IsDashing())
@@ -50,9 +52,9 @@ void DeadlyWall::HandleCollisions(Player& player)
     }
 
     // hit bottom wall
-    if (playerPos.y - playerHitBox.height / 2 <= m_Area.bottom)
+    if (playerPos.y - playerHitBox.height / 2 <= area.bottom)
     {
-        playerPos.y = m_Area.bottom + playerHitBox.height / 2;
+        playerPos.y = area.bottom + playerHitBox.height / 2;
         player.Damage(m_Damage);
 
         if (player.IsDashing())
@@ -62,9 +64,9 @@ void DeadlyWall::HandleCollisions(Player& player)
     }
 
     // hit top wall
-    if (playerPos.y + playerHitBox.height / 2 >= m_Area.bottom + m_Area.height)
+    if (playerPos.y + playerHitBox.height / 2 >= area.bottom + area.height)
     {
-        playerPos.y = m_Area.bottom + m_Area.height - playerHitBox.height / 2;
+        playerPos.y = area.bottom + area.height - playerHitBox.height / 2;
         player.Damage(m_Damage);
 
         if (player.IsDashing())
@@ -74,8 +76,24 @@ void DeadlyWall::HandleCollisions(Player& player)
     }
 
 
-    player.SetVelocity(playerVelocity);
+    player.m_Velocity = playerVelocity;
 
+}
+
+
+void DeadlyWall::HandleCollisionsBullet(Bullet& bullet)
+{
+    const Rectf& bulletHitBox{ bullet.GetHitBox() };
+    const Rectf area{ GetArea() };
+
+    // aabb
+    if (!utils::IsOverlapping(area, bulletHitBox))
+        return;
+
+    if (!utils::IsOverlapping(area, Circlef(bullet.m_Position, bulletHitBox.width / 2)))
+        return;
+
+    bullet.Destroy();
 }
 
 

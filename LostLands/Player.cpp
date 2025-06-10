@@ -7,6 +7,7 @@
 #include "EntityManager.h"
 #include "LevelManager.h"
 #include "Bullet.h"
+#include "MirrorArea.h"
 
 
 Player::Player(const Point2f& position) :
@@ -35,7 +36,7 @@ void Player::Draw() const
     utils::FillEllipse(m_Position, m_Width / 2, m_Height / 2);
 
     // draw HealthBar
-    constexpr float healthBarOffset{ 25.f };
+    constexpr float healthBarOffset{ 20.f };
     utils::SetColor(m_HealthBarColor);
     utils::FillRect(m_Position.x - healthBarOffset, m_Position.y + healthBarOffset,
         (GetHealth() / m_MaxHealth) * (2 * healthBarOffset), 10.f);
@@ -78,6 +79,8 @@ void Player::Update(float elapsedSec)
 
     if (m_bIsDead)
         return;
+
+    std::cout << "x: " << m_Position.x << ", Y: " << m_Position.y << '\n';
 
     if (m_IFramesCountDown >= 0.0f)
         m_IFramesCountDown -= elapsedSec;
@@ -134,7 +137,24 @@ void Player::Mirror()
     if (!m_bCanMirror || !m_bIsMirroringEnabled)
         return;
 
-    m_Position = Point2f(g_Window.width - m_Position.x, g_Window.height - m_Position.y);
+    const Point2f mirrorPosition{ g_Window.width - m_Position.x, g_Window.height - m_Position.y };
+
+    if (auto& mirrorAreas = EntityManager::GetInstance().GetMirrorAreas(); !mirrorAreas.empty())
+    {
+        bool canMirror{ false };
+        for (auto& mirrorArea : mirrorAreas)
+            if (mirrorArea.CanMirrorTo(mirrorPosition))
+            {
+                canMirror = true;
+                break;
+            }
+
+        if (!canMirror)
+            return;
+
+    }
+
+    m_Position = mirrorPosition;
     m_MirrorTimer = m_MirrorCooldown;
 
     m_bCanMirror = false;

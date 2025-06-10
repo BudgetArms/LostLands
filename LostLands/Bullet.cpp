@@ -4,11 +4,10 @@
 
 
 Bullet::Bullet(BulletType characterType, const Point2f& position, float angleDirection, float speed) :
-    m_BulletType{ characterType },
     m_Position{ position },
-    m_HitBox{},
     m_Direction{ cosf(utils::g_toRadians * angleDirection), sinf(utils::g_toRadians * angleDirection) },
-    m_Speed{ speed }
+    m_Speed{ speed },
+    m_BulletType{ characterType }
 {
     m_HitBox = Rectf(m_Position.x - m_Size / 2, m_Position.y - m_Size / 2, m_Size, m_Size);
 }

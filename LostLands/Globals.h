@@ -1,7 +1,4 @@
-﻿//#pragma once
-#ifndef GLOBALS_H
-#define GLOBALS_H
-
+﻿#pragma once
 #include <string>
 #include <iostream>
 
@@ -28,7 +25,3 @@ extern Rectf g_SmallWindow;
 extern Color4f g_HitBoxesColor;
 extern bool g_bShowHitboxes;
 
-extern std::string WStringToString(const std::wstring& wstr);
-
-#endif
-// GLOBALS_H

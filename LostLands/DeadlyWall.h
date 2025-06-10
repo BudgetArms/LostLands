@@ -2,7 +2,7 @@
 #include "Wall.h"
 
 
-class DeadlyWall final : public Wall
+class DeadlyWall : public Wall
 {
 public:
     DeadlyWall(const Rectf& area, float damage);
@@ -10,6 +10,7 @@ public:
     virtual void Draw() const override;
     virtual void HandleCollisions(Player& player) override;
 
+    virtual void HandleCollisionsBullet(Bullet& bullet) override;
 
 private:
     float m_Damage;

@@ -63,6 +63,12 @@
     <ClCompile Include="DeadlyWall.cpp">
       <Filter>Game FIles</Filter>
     </ClCompile>
+    <ClCompile Include="MirrorArea.cpp">
+      <Filter>Game FIles</Filter>
+    </ClCompile>
+    <ClCompile Include="MovingDeadlyWall.cpp">
+      <Filter>Game FIles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -109,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="WinDoor.h">
       <Filter>Game FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="MirrorArea.h">
+      <Filter>StartFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingDeadlyWall.h">
+      <Filter>StartFiles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

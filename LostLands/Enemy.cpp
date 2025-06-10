@@ -89,7 +89,7 @@ void Enemy::Shoot()
     if (!m_bCanShoot || !m_bIsShootingEnabled)
         return;
 
-    const Point2f directionToPlayer{ (player->GetPosition() - m_Position).Normalized() };
+    const Point2f directionToPlayer{ (player->m_Position - m_Position).Normalized() };
     const float angleToPlayer{ atan2f(directionToPlayer.y, directionToPlayer.x) };
 
     EntityManager::GetInstance().SpawnBullet(BulletType::Enemy, m_Position, utils::g_toDegrees * angleToPlayer);

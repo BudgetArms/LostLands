@@ -13,7 +13,7 @@ Wall::Wall(const Rectf& area) :
 
 void Wall::Draw() const
 {
-    utils::SetColor(1, 1, 1, 1);
+    utils::SetColor(1, 1, 1, 1.f);
     utils::FillRect(m_Area);
 }
 
@@ -29,12 +29,12 @@ void Wall::HandleCollisions(Player& player)
     if (!utils::IsOverlapping(playerHitBox, m_Area))
         return;
 
-    if (!utils::IsOverlapping(m_Area, Circlef(player.GetPosition(), playerHitBox.width / 2)))
+    if (!utils::IsOverlapping(m_Area, Circlef(player.m_Position, playerHitBox.width / 2)))
         return;
 
 
-    Point2f playerPos{ player.GetPosition() };
-    Vector2f playerVelocity = player.GetVelocity();
+    Point2f playerPos{ player.m_Position };
+    Vector2f playerVelocity = player.m_Velocity;
 
 
     if (playerPos.x < m_Area.left)
@@ -76,8 +76,8 @@ void Wall::HandleCollisions(Player& player)
             playerVelocity.y *= -player.GetBouncinessWalls();
     }
 
-    player.SetPosition(playerPos);
-    player.SetVelocity(playerVelocity);
+    player.m_Position = playerPos;
+    player.m_Velocity = playerVelocity;
 }
 
 void Wall::HandleCollisionsBullet(Bullet& bullet)
@@ -88,12 +88,12 @@ void Wall::HandleCollisionsBullet(Bullet& bullet)
     if (!utils::IsOverlapping(m_Area, bulletHitBox))
         return;
 
-    if (!utils::IsOverlapping(m_Area, Circlef(bullet.GetPosition(), bulletHitBox.width / 2)))
+    if (!utils::IsOverlapping(m_Area, Circlef(bullet.m_Position, bulletHitBox.width / 2)))
         return;
 
 
-    Point2f bulletPos{ bullet.GetPosition() };
-    Vector2f bulletDirection = bullet.GetDirection();
+    Point2f bulletPos{ bullet.m_Position };
+    Vector2f bulletDirection = bullet.m_Direction;
 
     if (bulletPos.x < m_Area.left)
     {
@@ -120,7 +120,7 @@ void Wall::HandleCollisionsBullet(Bullet& bullet)
         bulletDirection.y *= -1;
     }
 
-    bullet.SetDirection(bulletDirection);
+    bullet.m_Direction = bulletDirection;
 }
 
 
