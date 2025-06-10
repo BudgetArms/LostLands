@@ -117,10 +117,10 @@
       <Filter>Game FIles</Filter>
     </ClInclude>
     <ClInclude Include="MirrorArea.h">
-      <Filter>StartFiles</Filter>
+      <Filter>Game FIles</Filter>
     </ClInclude>
     <ClInclude Include="MovingDeadlyWall.h">
-      <Filter>StartFiles</Filter>
+      <Filter>Game FIles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
