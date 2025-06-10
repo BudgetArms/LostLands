@@ -23,6 +23,8 @@ public:
     bool HasPlayerFinishedLevel() const;
     const std::string& GetResourcePath() const { return m_ResourcePath; };
 
+    void Level4DrawThings() const;
+
 
     std::unique_ptr<Texture> m_uTextInfo;
 

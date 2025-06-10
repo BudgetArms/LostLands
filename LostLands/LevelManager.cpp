@@ -64,6 +64,9 @@ void LevelManager::Draw() const
     m_uTextDash->Draw(Point2f(30, g_Window.height - 30));
     m_uTextMirror->Draw(Point2f(210, g_Window.height - 30));
 
+    if (m_CurrentLevel == 4)
+        Level4DrawThings();
+
 
     if (!m_bWonGame && !m_bLostGame)
     {
@@ -86,56 +89,6 @@ void LevelManager::Draw() const
     }
 
 
-    if (m_CurrentLevel == 4)
-    {
-        // to hide the secret mirror (even if you win the game)
-        // nvm it blocks the player
-        //utils::SetColor(0, 0, 0, 1.f);
-        //utils::FillRect(Rectf(531, 42, 90, 55));
-
-
-        m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
-        //utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
-
-        // hitlighting specia area
-        utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
-        utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
-
-        if (!m_bHasDiscoveredMiddleRight)
-        {
-            utils::SetColor(0, 0, 0.2f);
-            utils::FillRect(g_WindowOffset + 370, g_WindowOffset + 100, 416, 250);
-        }
-
-        if (!m_bHasDiscoveredMiddleMirror)
-        {
-            utils::SetColor(0, 0, 0.2f);
-            utils::FillRect(g_WindowOffset + 610, g_WindowOffset + 100, 80, 80);
-        }
-
-        if (!m_bHasDiscoveredMiddleCenter)
-        {
-            utils::SetColor(0, 0, 0.2f);
-            utils::FillRect(g_WindowOffset + 70, g_WindowOffset + 170, 300, 180);
-        }
-
-        if (!m_bHasDiscoveredMiddleLeft)
-        {
-            utils::SetColor(0, 0, 0.2f);
-            utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 470, 70);
-            utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 70, 250);
-        }
-
-
-        if (!m_bHasDiscoveredBottom)
-        {
-            utils::SetColor(0, 0, 0.2f);
-            utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, 100);
-            utils::FillRect(g_WindowOffset + 700, g_WindowOffset, 86, 180);
-        }
-
-
-    }
 
 
 }
@@ -266,6 +219,61 @@ bool LevelManager::HasPlayerFinishedLevel() const
     }
 
     return isOverlapping;
+}
+
+void LevelManager::Level4DrawThings() const
+{
+    if (m_CurrentLevel == 4)
+    {
+        // to hide the secret mirror (even if you win the game)
+        // nvm it blocks the player
+        //utils::SetColor(0, 0, 0, 1.f);
+        //utils::FillRect(Rectf(531, 42, 90, 55));
+
+
+        m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
+        //utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
+
+        // hitlighting specia area
+        utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
+        utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
+
+        if (!m_bHasDiscoveredMiddleRight)
+        {
+            utils::SetColor(0, 0, 0.2f);
+            utils::FillRect(g_WindowOffset + 370, g_WindowOffset + 100, 416, 250);
+        }
+
+        if (!m_bHasDiscoveredMiddleMirror)
+        {
+            utils::SetColor(0, 0, 0.2f);
+            utils::FillRect(g_WindowOffset + 610, g_WindowOffset + 100, 80, 80);
+        }
+
+        if (!m_bHasDiscoveredMiddleCenter)
+        {
+            utils::SetColor(0, 0, 0.2f);
+            utils::FillRect(g_WindowOffset + 70, g_WindowOffset + 170, 300, 180);
+        }
+
+        if (!m_bHasDiscoveredMiddleLeft)
+        {
+            utils::SetColor(0, 0, 0.2f);
+            utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 470, 70);
+            utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 70, 250);
+        }
+
+
+        if (!m_bHasDiscoveredBottom)
+        {
+            utils::SetColor(0, 0, 0.2f);
+            utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, 100);
+            utils::FillRect(g_WindowOffset + 700, g_WindowOffset, 86, 180);
+        }
+
+
+    }
+
 }
 
 
