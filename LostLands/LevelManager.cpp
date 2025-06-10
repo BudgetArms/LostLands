@@ -39,7 +39,6 @@ LevelManager::LevelManager() :
     m_NrOfLevels = static_cast<int>(m_ArrLoadLevel.size());
 
     m_CurrentLevel = 0;
-    m_CurrentLevel = 4;
 
 }
 
