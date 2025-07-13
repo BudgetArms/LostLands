@@ -15,36 +15,38 @@ class Player;
 class Game : public BaseGame
 {
 public:
-    explicit Game(const Window& window);
-    ~Game() = default;
+	explicit Game(const Window& window);
+	~Game() = default;
 
-    Game(const Game& other) = delete;
-    Game& operator=(const Game& other) = delete;
-    Game(Game&& other) = delete;
-    Game& operator=(Game&& other) = delete;
+	Game(const Game& other) = delete;
+	Game& operator=(const Game& other) = delete;
+	Game(Game&& other) = delete;
+	Game& operator=(Game&& other) = delete;
 
-    // http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rh-override
-    void Update(float elapsedSec) override;
-    void Draw() const override;
+	// http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rh-override
+	void Update(float elapsedSec) override;
+	void Draw() const override;
 
-    // Event handling
-    void ProcessKeyDownEvent(const SDL_KeyboardEvent& e) override;
-    void ProcessKeyUpEvent(const SDL_KeyboardEvent& e)	override;
-    void ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e) override;
-    void ProcessMouseDownEvent(const SDL_MouseButtonEvent& e) override;
-    void ProcessMouseUpEvent(const SDL_MouseButtonEvent& e) override;
+	// Event handling
+	void ProcessKeyDownEvent(const SDL_KeyboardEvent& e) override;
+	void ProcessKeyUpEvent(const SDL_KeyboardEvent& e)	override;
+	void ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e) override;
+	void ProcessMouseDownEvent(const SDL_MouseButtonEvent& e) override;
+	void ProcessMouseUpEvent(const SDL_MouseButtonEvent& e) override;
 
 
 private:
-    // FUNCTIONS
-    void ClearBackground() const;
+	// FUNCTIONS
+	void ClearBackground() const;
+
+	void UpdateFpsCounter(float elapsedSec);
 
 
-    const std::string m_ResourcePath{};
-    std::unique_ptr<Texture> m_uFpsTexture{};
+	const std::string m_ResourcePath{};
+	std::unique_ptr<Texture> m_uFpsTexture{};
 
-    float m_AccumulatedSec{};
-    float m_FPS{};
+	float m_AccumulatedSec{};
+	float m_FPS{};
 
 
 };

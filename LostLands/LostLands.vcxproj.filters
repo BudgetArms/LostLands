@@ -69,6 +69,12 @@
     <ClCompile Include="MovingDeadlyWall.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
+    <ClCompile Include="CheckPoint.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Heart.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -121,6 +127,12 @@
     </ClInclude>
     <ClInclude Include="MovingDeadlyWall.h">
       <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckPoint.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Heart.h">
+      <Filter>StartFiles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

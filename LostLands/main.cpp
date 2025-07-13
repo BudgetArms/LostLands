@@ -6,40 +6,43 @@
 void StartHeapControl();
 void DumpMemoryLeaks();
 
+
 int SDL_main(int argv, char** args)
 {
-    srand(static_cast<unsigned int>(time(nullptr)));
+	srand(static_cast<unsigned int>(time(nullptr)));
 
-    StartHeapControl();
+	StartHeapControl();
 
-    Game* pGame{ new Game{ Window{ "LostLands", g_Window.width, g_Window.height} } };
-    pGame->Run();
-    delete pGame;
+	Game* pGame{ new Game{ Window{ "LostLands v2.0", g_Window.width, g_Window.height} } };
+	pGame->Run();
+	delete pGame;
 
-    DumpMemoryLeaks();
-    return 0;
+	DumpMemoryLeaks();
+	return 0;
 }
 
 
 void StartHeapControl()
 {
+
 #if defined(DEBUG) | defined(_DEBUG)
-    // Notify user if heap is corrupt
-    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
+	// Notify user if heap is corrupt
+	HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
 
-    // Report detected leaks when the program exits
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	// Report detected leaks when the program exits
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    // Set a breakpoint on the specified object allocation order number
-    //_CrtSetBreakAlloc( 156 );
+	// Set a breakpoint on the specified object allocation order number
+	//_CrtSetBreakAlloc( 156 );
 #endif
 }
 
 void DumpMemoryLeaks()
 {
 #if defined(DEBUG) | defined(_DEBUG)
-    _CrtDumpMemoryLeaks();
+	_CrtDumpMemoryLeaks();
 #endif
+
 }
 
 

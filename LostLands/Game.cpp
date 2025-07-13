@@ -15,65 +15,69 @@
 
 
 Game::Game(const Window& window) :
-    BaseGame{ window }
+	BaseGame{ window }
 {
-    LevelManager::GetInstance().Start();
+	LevelManager::GetInstance().Start();
 }
 
 void Game::Update(float elapsedSec)
 {
-    m_AccumulatedSec += elapsedSec;
+	m_AccumulatedSec += elapsedSec;
 
-    LevelManager::GetInstance().Update(elapsedSec);
-    EntityManager::GetInstance().Update(elapsedSec);
-    InputManager::GetInstance().Update(elapsedSec);
+	LevelManager::GetInstance().Update(elapsedSec);
+	EntityManager::GetInstance().Update(elapsedSec);
+	InputManager::GetInstance().Update(elapsedSec);
 
-
-    if (m_AccumulatedSec > 0.5f)
-    {
-        m_AccumulatedSec = 0;
-        m_FPS = 1 / elapsedSec;
-
-        std::string fpsText{ "FPS: " + std::to_string(int(m_FPS)) };
-
-        if (m_uFpsTexture)
-            m_uFpsTexture.reset();
-
-        m_uFpsTexture = std::make_unique<Texture>(fpsText, m_ResourcePath + std::string("Aovel.ttf"), 20, Color4f(0.4f, 0.4f, 0.4f, 1.f));
-
-        if (!m_uFpsTexture->IsCreationOk())
-            std::abort();
-
-    }
+	UpdateFpsCounter(elapsedSec);
 
 }
 
 void Game::Draw() const
 {
-    ClearBackground();
-    glClearColor(1.f, 1.f, 1.f, 1.f);
+	ClearBackground();
+	glClearColor(1.f, 1.f, 1.f, 1.f);
 
 
-    utils::SetColor(1.f, 1.f, 1.f, 0.9f);
-    utils::FillRect(g_Window);
+	utils::SetColor(1.f, 1.f, 1.f, 0.9f);
+	utils::FillRect(g_Window);
 
-    utils::SetColor(0.f, 0.f, 0.f, 1.f);
-    utils::FillRect(g_SmallWindow);
-
-
-    EntityManager::GetInstance().Draw();
-    LevelManager::GetInstance().Draw();
+	utils::SetColor(0.f, 0.f, 0.f, 1.f);
+	utils::FillRect(g_SmallWindow);
 
 
-    if (m_uFpsTexture)
-        m_uFpsTexture->Draw(Point2f(700, 470));
+	EntityManager::GetInstance().Draw();
+	LevelManager::GetInstance().Draw();
+
+
+	if (m_uFpsTexture)
+		m_uFpsTexture->Draw(Point2f(700, 470));
 
 }
 
 void Game::ClearBackground() const
 {
-    glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(0.0f, 0.0f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Game::UpdateFpsCounter(float elapsedSec)
+{
+	if (m_AccumulatedSec > 0.5f)
+	{
+		m_AccumulatedSec = 0;
+		m_FPS = 1 / elapsedSec;
+
+		std::string fpsText{ "FPS: " + std::to_string(int(m_FPS)) };
+
+		if (m_uFpsTexture)
+			m_uFpsTexture.reset();
+
+		m_uFpsTexture = std::make_unique<Texture>(fpsText, m_ResourcePath + std::string("Aovel.ttf"), 20, Color4f(0.4f, 0.4f, 0.4f, 1.f));
+
+		if (!m_uFpsTexture->IsCreationOk())
+			std::abort();
+
+	}
 }
 
 
@@ -82,27 +86,27 @@ void Game::ClearBackground() const
 
 void Game::ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
 {
-    InputManager::GetInstance().ManageKeyDown(e);
+	InputManager::GetInstance().ManageKeyDown(e);
 }
 
 void Game::ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
 {
-    InputManager::GetInstance().ManageKeyUp(e);
+	InputManager::GetInstance().ManageKeyUp(e);
 }
 
 void Game::ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e)
 {
-    InputManager::GetInstance().ManageMouseMotion(e);
+	InputManager::GetInstance().ManageMouseMotion(e);
 }
 
 void Game::ProcessMouseDownEvent(const SDL_MouseButtonEvent& e)
 {
-    InputManager::GetInstance().ManageMouseDown(e);
+	InputManager::GetInstance().ManageMouseDown(e);
 }
 
 void Game::ProcessMouseUpEvent(const SDL_MouseButtonEvent& e)
 {
-    InputManager::GetInstance().ManageMouseUp(e);
+	InputManager::GetInstance().ManageMouseUp(e);
 
 }
 
