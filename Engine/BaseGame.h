@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "structs.h"
 #include "SDL.h"
 // https://BaseGameprogrammingpatterns.com/subclass-sandbox.html
@@ -7,44 +7,44 @@
 class BaseGame
 {
 public:
-	explicit BaseGame( const Window& window );
-	BaseGame( const BaseGame& other ) = delete;
-	BaseGame& operator=( const BaseGame& other ) = delete;
+	explicit BaseGame(const Window& window);
+	BaseGame(const BaseGame& other) = delete;
+	BaseGame& operator=(const BaseGame& other) = delete;
 	BaseGame(BaseGame&& other) = delete;
 	BaseGame& operator=(BaseGame&& other) = delete;
-	virtual ~BaseGame( );
+	virtual ~BaseGame();
 
-	void Run( );
+	void Run();
 
-	virtual void Update(float elapsedSec)
+	virtual void Update(float)
 	{
-		
+
 	}
 	virtual void Draw() const
 	{
-		
+
 	}
 
 	// Event handling
-	virtual void ProcessKeyDownEvent(const SDL_KeyboardEvent& e)
+	virtual void ProcessKeyDownEvent(const SDL_KeyboardEvent&)
 	{
-		
+
 	}
-	virtual void ProcessKeyUpEvent(const SDL_KeyboardEvent& e)
+	virtual void ProcessKeyUpEvent(const SDL_KeyboardEvent&)
 	{
-		
+
 	}
-	virtual void ProcessMouseMotionEvent(const SDL_MouseMotionEvent& e)
+	virtual void ProcessMouseMotionEvent(const SDL_MouseMotionEvent&)
 	{
-		
+
 	}
-	virtual void ProcessMouseDownEvent(const SDL_MouseButtonEvent& e)
+	virtual void ProcessMouseDownEvent(const SDL_MouseButtonEvent&)
 	{
-		
+
 	}
-	virtual void ProcessMouseUpEvent(const SDL_MouseButtonEvent& e)
+	virtual void ProcessMouseUpEvent(const SDL_MouseButtonEvent&)
 	{
-		
+
 	}
 
 	const Rectf& GetViewPort() const
@@ -65,8 +65,8 @@ private:
 	bool m_Initialized;
 	// Prevent timing jumps when debugging
 	const float m_MaxElapsedSeconds;
-	
+
 	// FUNCTIONS
-	void InitializeGameEngine( );
-	void CleanupGameEngine( );
+	void InitializeGameEngine();
+	void CleanupGameEngine();
 };

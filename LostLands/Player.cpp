@@ -10,6 +10,7 @@
 #include "Bullet.h"
 #include "CheckPoint.h"
 #include "MirrorArea.h"
+#include "Utils.h"
 
 
 Player::Player(const Point2f& position, int lives) :

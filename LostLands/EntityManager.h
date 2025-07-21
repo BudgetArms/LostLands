@@ -6,7 +6,6 @@
 
 #include "Singleton.h"
 
-
 enum class BulletType
 {
 	Player,
