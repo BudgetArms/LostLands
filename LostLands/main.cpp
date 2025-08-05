@@ -13,7 +13,7 @@ int SDL_main(int argv, char** args)
 
 	StartHeapControl();
 
-	Game* pGame{ new Game{ Window{ "LostLands v2.0", g_Window.width, g_Window.height} } };
+	auto pGame{ new Game{ Window{ "LostLands v2.0", g_Window.width, g_Window.height} } };
 	pGame->Run();
 	delete pGame;
 

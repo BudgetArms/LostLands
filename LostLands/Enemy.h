@@ -2,19 +2,21 @@
 #include "Character.h"
 
 
-class Enemy final : public Character
+class Enemy : public Character
 {
 public:
-    Enemy(const Point2f& position);
-    Enemy() = default;
+	Enemy(const Point2f& position);
+
+
+	bool m_bIsEnabled{ true };
 
 
 private:
-    void Draw() const override;
-    void Update(float elapsedSec) override;
+	void Draw() const override;
+	void Update(float elapsedSec) override;
 
-    Rectf& GetHitBox() override;
-    virtual void Shoot() override;
+	Rectf& GetHitBox() override;
+	virtual void Shoot() override;
 
 
 };

@@ -142,30 +142,30 @@ void Texture::CreateFromSurface(SDL_Surface* pSurface)
 	GLenum pixelFormat{ GL_RGB };
 	switch (pSurface->format->BytesPerPixel)
 	{
-	case 3:
-		if (pSurface->format->Rmask == 0x000000ff)
-		{
-			pixelFormat = GL_RGB;
-		}
-		else
-		{
-			pixelFormat = GL_BGR;
-		}
-		break;
-	case 4:
-		if (pSurface->format->Rmask == 0x000000ff)
-		{
-			pixelFormat = GL_RGBA;
-		}
-		else
-		{
-			pixelFormat = GL_BGRA;
-		}
-		break;
-	default:
-		std::cerr << "Texture::CreateFromSurface, unknow pixel format, BytesPerPixel: " << pSurface->format->BytesPerPixel << "\nUse 32 bit or 24 bit images.\n";
-		m_CreationOk = false;
-		return;
+		case 3:
+			if (pSurface->format->Rmask == 0x000000ff)
+			{
+				pixelFormat = GL_RGB;
+			}
+			else
+			{
+				pixelFormat = GL_BGR;
+			}
+			break;
+		case 4:
+			if (pSurface->format->Rmask == 0x000000ff)
+			{
+				pixelFormat = GL_RGBA;
+			}
+			else
+			{
+				pixelFormat = GL_BGRA;
+			}
+			break;
+		default:
+			std::cerr << "Texture::CreateFromSurface, unknow pixel format, BytesPerPixel: " << pSurface->format->BytesPerPixel << "\nUse 32 bit or 24 bit images.\n";
+			m_CreationOk = false;
+			return;
 	}
 
 	//Generate an array of textures.  We only want one texture (one element array), so trick

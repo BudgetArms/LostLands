@@ -3,6 +3,7 @@
 
 #include <execution>
 #include <ranges>
+#include <algorithm>
 
 #include "LevelManager.h"
 
@@ -10,6 +11,7 @@
 #include "SpeedPad.h"
 #include "Character.h"
 #include "Enemy.h"
+#include "TurretEnemy.h"
 #include "Player.h"
 #include "Wall.h"
 #include "DeadlyWall.h"
@@ -17,6 +19,8 @@
 #include "MovingDeadlyWall.h"
 #include "WinDoor.h"
 #include "MirrorArea.h"
+#include "UnlockArea.h"
+#include "UnlockWall.h"
 
 
 
@@ -55,6 +59,9 @@ void EntityManager::Draw() const
 
 	for (auto& mirrorArea : m_MirrorAreas)
 		mirrorArea.Draw();
+
+	for (auto& uUnlockArea : m_UnlockAreas)
+		uUnlockArea->Draw();
 
 
 	if (m_Player)
@@ -105,6 +112,18 @@ void EntityManager::Update(float elapsedSec)
 			if (utils::IsOverlapping(m_Player->GetHitBox(), uCheckPoint->GetArea()))
 				LevelManager::GetInstance().m_CurrentCheckPoint = uCheckPoint.get();
 
+	if (m_Player)
+		for (auto& uUnlockArea : m_UnlockAreas)
+			if (utils::IsOverlapping(m_Player->GetHitBox(), uUnlockArea->GetArea()))
+			{
+				auto pWall = uUnlockArea->GetWall();
+				std::erase_if(m_Walls, [pWall](const auto& uWall)
+					{
+						return uWall.get() == pWall;
+					});
+			}
+
+
 
 	LateUpdate();
 
@@ -137,6 +156,7 @@ void EntityManager::Reset()
 	m_WinDoors.clear();
 	m_MirrorAreas.clear();
 	m_CheckPoints.clear();
+	m_UnlockAreas.clear();
 
 	m_bLevelComplete = false;
 }
@@ -177,6 +197,15 @@ SpeedPad* EntityManager::SpawnSpeedPad(const Point2f& position, const Vector2f& 
 	return pSpeedPad;
 }
 
+SpeedPad* EntityManager::SpawnSpeedPad(const Rectf& area, const Vector2f& direction, float speed)
+{
+	auto speedPad = std::make_unique<SpeedPad>(area, direction, speed);
+	auto pSpeedPad = speedPad.get();
+
+	m_SpeedPads.emplace_back(std::move(speedPad));
+	return pSpeedPad;
+}
+
 Enemy* EntityManager::SpawnShootingEnemy(const Point2f& position, float bulletsPerSecond)
 {
 	auto enemy = std::make_unique<Enemy>(position);
@@ -187,6 +216,19 @@ Enemy* EntityManager::SpawnShootingEnemy(const Point2f& position, float bulletsP
 
 	m_Entities.emplace_back(std::move(enemy));
 	return pEnemy;
+
+}
+
+TurretEnemy* EntityManager::SpawnTurretEnemy(const Point2f& position, const Vector2f& direction, float bulletsPerSecond)
+{
+	auto turret = std::make_unique<TurretEnemy>(position, direction);
+	auto pTurret = turret.get();
+	turret->m_bIsShootingEnabled = true;
+	turret->m_BulletsPerSecond = bulletsPerSecond;
+	turret->m_Color = Color4f(1.f, 0.2f, 0.0f, 1.f);
+
+	m_Entities.emplace_back(std::move(turret));
+	return pTurret;
 }
 
 Wall* EntityManager::SpawnWall(const Rectf& area)
@@ -224,6 +266,7 @@ MovingDeadlyWall* EntityManager::SpawnMovingDeadlyWall(const Rectf& area, float 
 
 	m_Walls.emplace_back(std::move(movingDeadlyWall));
 	return pMovingDeadlyWall;
+
 }
 
 WinDoor* EntityManager::SpawnWinDoor(const Rectf& area, bool needsAllEnemiesKilled)
@@ -238,6 +281,26 @@ WinDoor* EntityManager::SpawnWinDoor(const Rectf& area, bool needsAllEnemiesKill
 void EntityManager::SpawnMirrorArea(const Rectf& area)
 {
 	m_MirrorAreas.emplace_back(area);
+}
+
+
+UnlockWall* EntityManager::SpawnUnlockWall(const Rectf& area)
+{
+	auto unlockWall = std::make_unique<UnlockWall>(area);
+	auto pUnlockWall = unlockWall.get();
+
+	m_Walls.emplace_back(std::move(unlockWall));
+	return pUnlockWall;
+}
+
+
+void EntityManager::SpawnUnlockArea(const Rectf& area, UnlockWall* pUnlockWall)
+{
+	auto unlockArea = std::make_unique<UnlockArea>(area, pUnlockWall);
+	auto pUnlockArea = unlockArea.get();
+
+	m_UnlockAreas.emplace_back(std::move(unlockArea));
+	//return pUnlockArea;
 }
 
 

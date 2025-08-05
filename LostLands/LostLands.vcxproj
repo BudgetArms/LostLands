@@ -213,6 +213,9 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SpeedPad.cpp" />
+    <ClCompile Include="TurretEnemy.cpp" />
+    <ClCompile Include="UnlockArea.cpp" />
+    <ClCompile Include="UnlockWall.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="WinDoor.cpp" />
   </ItemGroup>
@@ -234,6 +237,9 @@ xcopy "$(SolutionDir)Resources\*.*" "$(TargetDir)" /y /d /s</Command>
     <ClInclude Include="Player.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SpeedPad.h" />
+    <ClInclude Include="TurretEnemy.h" />
+    <ClInclude Include="UnlockArea.h" />
+    <ClInclude Include="UnlockWall.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="WinDoor.h" />
   </ItemGroup>

@@ -10,13 +10,6 @@ class Player final : public Character
 public:
 
 	Player(const Point2f& position, int lives);
-	//Player(const Point2f& position, int lives = 3);
-	~Player() = default;
-
-	Player(Player&) = delete;
-	Player(Player&&) = delete;
-	Player operator&=(Player&) = delete;
-	Player operator&=(Player&&) = delete;
 
 
 	virtual void Draw() const override;
@@ -37,6 +30,8 @@ public:
 	void SetBouncinessWalls(float bouncinessWalls) { m_BouncinessWalls = bouncinessWalls; };
 
 	bool IsDashing() const { return m_bIsDashing; };
+
+	void SetDashCoolDown(float newCooldownTime) { m_DashCooldown = newCooldownTime; };
 
 
 	float m_DashTime{ 1.f };
@@ -69,25 +64,23 @@ private:
 	bool m_bIsDashingEnabled{};
 	bool m_bIsMirroringEnabled{};
 
-
-
 	// dash
 	bool m_bIsDashing{};
 	bool m_bCanMirror{};
 
 	const float m_DashSpeed{ 300.f };
 	float m_DashTimer{};
-	const float m_DashCooldown{ 4.f };
+	float m_DashCooldown{ 2.f };
 
 	// mirror
 	float m_MirrorTimer{};
-	const float m_MirrorCooldown{ 5.f };
+	const float m_MirrorCooldown{ 2.f };
 
 	// IFrames
 	const float m_IFramesTime{ 0.5f };
 	float m_IFramesCountDown{};
 
-	float m_BouncinessWalls{ 2 };
+	float m_BouncinessWalls{ 2.f };
 
 
 };

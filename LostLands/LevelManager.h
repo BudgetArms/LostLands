@@ -22,12 +22,14 @@ public:
 	void ResetLevel();
 
 	bool HasPlayerFinishedLevel() const;
-	const std::string& GetResourcePath() const { return m_ResourcePath; };
 
 	void Level4DrawThings() const;
+	void Level5DrawThings() const;
 
+	std::unique_ptr<Texture>& GetTextInfo() { return m_uTextInfo; };
 
-	std::unique_ptr<Texture> m_uTextInfo;
+	const std::string m_FontPath{ "Aovel.ttf" };
+
 	CheckPoint* m_CurrentCheckPoint{ nullptr };
 	Point2f m_CurrentSpawnPosition{};
 
@@ -37,21 +39,27 @@ private:
 	LevelManager();
 	~LevelManager(); // bc of class forward
 
+	// needs to be before unique_ptr's bc initializing order
+	const int m_FontSizeSmall{ 26 };
+	const int m_FontSizeMedium{ 30 };
+	const int m_FontSizeBig{ 50 };
 
-	const std::string m_ResourcePath{ "" };
+	std::unique_ptr<Texture> m_uTextInfo;
+	std::unique_ptr<Texture> m_uTextWon;
+	std::unique_ptr<Texture> m_uTextDead;
+	std::unique_ptr<Texture> m_uTextLevelName;
 
-	std::unique_ptr<Texture>		m_uTextWon;
-	std::unique_ptr<Texture>		m_uTextDead;
-
-	std::unique_ptr<Texture>		m_uTextLevel4;
-	std::unique_ptr<Texture>		m_uTextMirror;
-	std::unique_ptr<Texture>		m_uTextDash;
+	std::unique_ptr<Texture> m_uTextLevel4;
+	std::unique_ptr<Texture> m_uTextLevel5;
+	std::unique_ptr<Texture> m_uTextMirror;
+	std::unique_ptr<Texture> m_uTextDash;
 
 	std::vector<std::function<void()>> m_ArrLoadLevel{};
 
 
+
 	int m_CurrentLevel{ 0 };
-	int m_NrOfLevels{ 5 };
+	int m_NrOfLevels;
 
 
 	bool m_bWonGame{ false };
@@ -64,6 +72,14 @@ private:
 	bool m_bHasDiscoveredMiddleMirror{ false };
 	bool m_bHasDiscoveredMiddleLeft{ false };
 	bool m_bHasDiscoveredBottom{ false };
+
+	// lvl 5 specific
+	bool m_bHasDiscovered1{ false };
+	bool m_bHasDiscovered2{ false };
+	bool m_bHasDiscovered3{ false };
+	bool m_bHasDiscovered4{ false };
+	bool m_bHasDiscovered5{ false };
+	bool m_bHasDiscovered6{ false };
 
 
 };

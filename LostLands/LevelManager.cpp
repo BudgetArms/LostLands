@@ -13,18 +13,20 @@
 void SetLevelTutorialDash();
 void SetLevelTutorialShooting();
 void SetLevelTutorialMirror();
-void SetLevel1();
-void SetLevel2();
 void SetLevel3();
+void SetLevel4();
+void SetLevel5();
 
 
 LevelManager::LevelManager() :
-	m_uTextInfo{ std::make_unique<Texture>("InfoText Default", m_ResourcePath + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f)) },
-	m_uTextWon{ std::make_unique<Texture>("Won Game, Press R to Restart", m_ResourcePath + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f)) },
-	m_uTextDead{ std::make_unique<Texture>("You died, Press R to Restart", m_ResourcePath + std::string("Aovel.ttf"), 30, Color4f(1.f, 1.f, 1.f, 1.f)) },
-	m_uTextLevel4{ std::make_unique<Texture>("WELL PLAYED", m_ResourcePath + std::string("Aovel.ttf"), 50, Color4f(1.f, 1.f, 1.f, 1.f)) },
-	m_uTextMirror{ std::make_unique<Texture>("Mirror", m_ResourcePath + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f)) },
-	m_uTextDash{ std::make_unique<Texture>("Dash", m_ResourcePath + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f)) }
+	m_uTextInfo{ std::make_unique<Texture>("InfoText Default", m_FontPath, m_FontSizeMedium, Color4f(1.f, 1.f, 1.f, 1.f)) },
+	m_uTextWon{ std::make_unique<Texture>("Won Game, Press R to Restart", m_FontPath, m_FontSizeMedium, Color4f(1.f, 1.f, 1.f, 1.f)) },
+	m_uTextDead{ std::make_unique<Texture>("You died, Press R to Restart", m_FontPath, m_FontSizeMedium, Color4f(1.f, 1.f, 1.f, 1.f)) },
+	m_uTextLevelName{ std::make_unique<Texture>("Level x", m_FontPath, m_FontSizeMedium, Color4f(0.f, 0.f, 0.f, 1.f)) },
+	m_uTextLevel4{ std::make_unique<Texture>("Nice", m_FontPath, m_FontSizeBig, Color4f(1.f, 1.f, 1.f, 1.f)) },
+	m_uTextLevel5{ std::make_unique<Texture>("WELL PLAYED", m_FontPath, m_FontSizeMedium - 2, Color4f(1.f, 1.f, 1.f, 1.f)) },
+	m_uTextMirror{ std::make_unique<Texture>("Mirror", m_FontPath, m_FontSizeSmall, Color4f(0.f, 0.f, 0.f, 1.f)) },
+	m_uTextDash{ std::make_unique<Texture>("Dash", m_FontPath, m_FontSizeSmall, Color4f(0.f, 0.f, 0.f, 1.f)) }
 {
 	if (!m_uTextWon->IsCreationOk())
 		std::abort();
@@ -35,12 +37,11 @@ LevelManager::LevelManager() :
 	m_ArrLoadLevel.push_back(SetLevelTutorialDash);
 	m_ArrLoadLevel.push_back(&SetLevelTutorialShooting);
 	m_ArrLoadLevel.push_back(&SetLevelTutorialMirror);
-	m_ArrLoadLevel.push_back(&SetLevel1);
-	m_ArrLoadLevel.push_back(&SetLevel2);
+	m_ArrLoadLevel.push_back(&SetLevel3);
+	m_ArrLoadLevel.push_back(&SetLevel4);
+	m_ArrLoadLevel.push_back(&SetLevel5);
 
 	m_NrOfLevels = static_cast<int>(m_ArrLoadLevel.size());
-
-	m_CurrentLevel = 0;
 
 }
 
@@ -63,11 +64,16 @@ void LevelManager::Start()
 void LevelManager::Draw() const
 {
 
-	m_uTextDash->Draw(Point2f(30, g_Window.height - 30));
-	m_uTextMirror->Draw(Point2f(210, g_Window.height - 30));
+	m_uTextLevelName->Draw(Point2f(g_Window.width / 2.f - 100.f, -6.f));
+
+	m_uTextDash->Draw(Point2f(30.f, g_Window.height - 30.f));
+	m_uTextMirror->Draw(Point2f(210.f, g_Window.height - 30.f));
 
 	if (m_CurrentLevel == 4)
 		Level4DrawThings();
+
+	if (m_CurrentLevel == 5)
+		Level5DrawThings();
 
 
 	if (!m_bWonGame && !m_bLostGame)
@@ -133,6 +139,36 @@ void LevelManager::Update(float elapsedSec)
 
 
 			}
+			if (m_CurrentLevel == 5)
+			{
+				Rectf lvl5_1{ g_WindowOffset + 590, g_WindowOffset, 70, 70 };
+				Rectf lvl5_2{ g_WindowOffset, g_WindowOffset, 70, 70 };
+				Rectf lvl5_3{ g_WindowOffset + 500, g_WindowOffset + 110, 80, 50 };
+				Rectf lvl5_4{ g_WindowOffset + 200, g_WindowOffset + 80, 41, 41 };
+				Rectf lvl5_5{ g_WindowOffset + 534, g_WindowOffset + 370, 54, 54 };
+				Rectf lvl5_6{ g_WindowOffset + 212, g_WindowOffset + 386, 88, 54 };
+
+
+				if (utils::IsPointInRect(player->m_Position, lvl5_1))
+					m_bHasDiscovered1 = true;
+
+				if (utils::IsPointInRect(player->m_Position, lvl5_2))
+					m_bHasDiscovered2 = true;
+
+				if (utils::IsPointInRect(player->m_Position, lvl5_3))
+					m_bHasDiscovered3 = true;
+
+				if (utils::IsPointInRect(player->m_Position, lvl5_4))
+					m_bHasDiscovered4 = true;
+
+				if (utils::IsPointInRect(player->m_Position, lvl5_5))
+					m_bHasDiscovered5 = true;
+
+				if (utils::IsPointInRect(player->m_Position, lvl5_6))
+					m_bHasDiscovered6 = true;
+
+
+			}
 
 		}
 		else
@@ -164,14 +200,25 @@ void LevelManager::SetLevel(int level)
 	EntityManager::GetInstance().Reset();
 	m_CurrentLevel = level;
 
+	const std::string levelNameText{ "Level " + std::to_string(m_CurrentLevel) };
+	m_uTextLevelName = std::make_unique<Texture>(levelNameText, m_FontPath, m_FontSizeMedium, Color4f(0.f, 0.f, 0.f, 1.f));
+
+
 	m_bWonGame = false;
 	m_bLostGame = false;
-	//
+
 	m_bHasDiscoveredMiddleRight = false;
 	m_bHasDiscoveredMiddleCenter = false;
 	m_bHasDiscoveredMiddleMirror = false;
 	m_bHasDiscoveredMiddleLeft = false;
 	m_bHasDiscoveredBottom = false;
+
+	m_bHasDiscovered1 = false;
+	m_bHasDiscovered2 = false;
+	m_bHasDiscovered3 = false;
+	m_bHasDiscovered4 = false;
+	m_bHasDiscovered5 = false;
+	m_bHasDiscovered6 = false;
 
 
 	if (m_CurrentLevel < 0 || m_CurrentLevel > m_NrOfLevels)
@@ -188,7 +235,6 @@ void LevelManager::SetLevel(int level)
 	// reset the current level
 	m_uTextInfo = nullptr;
 	m_ArrLoadLevel[m_CurrentLevel]();
-
 
 }
 
@@ -225,61 +271,276 @@ bool LevelManager::HasPlayerFinishedLevel() const
 	return isOverlapping;
 }
 
+
+
 void LevelManager::Level4DrawThings() const
 {
-	if (m_CurrentLevel == 4)
+	if (m_CurrentLevel != 4)
+		return;
+
+	// to hide the secret mirror (even if you win the game)
+	// nvm it blocks the player
+	//utils::SetColor(0, 0, 0, 1.f);
+	//utils::FillRect(Rectf(531, 42, 90, 55));
+
+
+	m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
+	//utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
+
+	// hitlighting specific area
+	utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
+	utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
+
+	if (!m_bHasDiscoveredMiddleRight)
 	{
-		// to hide the secret mirror (even if you win the game)
-		// nvm it blocks the player
-		//utils::SetColor(0, 0, 0, 1.f);
-		//utils::FillRect(Rectf(531, 42, 90, 55));
-
-
-		m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
-		//utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
-
-		// hitlighting specia area
-		utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
-		utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
-
-		if (!m_bHasDiscoveredMiddleRight)
-		{
-			utils::SetColor(0, 0, 0.2f);
-			utils::FillRect(g_WindowOffset + 370, g_WindowOffset + 100, 416, 250);
-		}
-
-		if (!m_bHasDiscoveredMiddleMirror)
-		{
-			utils::SetColor(0, 0, 0.2f);
-			utils::FillRect(g_WindowOffset + 610, g_WindowOffset + 100, 80, 80);
-		}
-
-		if (!m_bHasDiscoveredMiddleCenter)
-		{
-			utils::SetColor(0, 0, 0.2f);
-			utils::FillRect(g_WindowOffset + 70, g_WindowOffset + 170, 300, 180);
-		}
-
-		if (!m_bHasDiscoveredMiddleLeft)
-		{
-			utils::SetColor(0, 0, 0.2f);
-			utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 470, 70);
-			utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 70, 250);
-		}
-
-
-		if (!m_bHasDiscoveredBottom)
-		{
-			utils::SetColor(0, 0, 0.2f);
-			utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, 100);
-			utils::FillRect(g_WindowOffset + 700, g_WindowOffset, 86, 180);
-		}
-
-
+		utils::SetColor(0, 0, 0.2f);
+		utils::FillRect(g_WindowOffset + 370, g_WindowOffset + 100, 416, 250);
 	}
+
+	if (!m_bHasDiscoveredMiddleMirror)
+	{
+		utils::SetColor(0, 0, 0.2f);
+		utils::FillRect(g_WindowOffset + 610, g_WindowOffset + 100, 80, 80);
+	}
+
+	if (!m_bHasDiscoveredMiddleCenter)
+	{
+		utils::SetColor(0, 0, 0.2f);
+		utils::FillRect(g_WindowOffset + 70, g_WindowOffset + 170, 300, 180);
+	}
+
+	if (!m_bHasDiscoveredMiddleLeft)
+	{
+		utils::SetColor(0, 0, 0.2f);
+		utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 470, 70);
+		utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 70, 250);
+	}
+
+
+	if (!m_bHasDiscoveredBottom)
+	{
+		utils::SetColor(0, 0, 0.2f);
+		utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, 100);
+		utils::FillRect(g_WindowOffset + 700, g_WindowOffset, 86, 180);
+	}
+
+
 
 }
 
+void LevelManager::Level5DrawThings() const
+{
+	if (m_CurrentLevel != 5)
+		return;
+
+	m_uTextLevel5->Draw(Point2f(160, 354));
+
+
+	utils::SetColor(0, 0, 0.2f);
+
+	//return;
+	if (!m_bHasDiscovered1)
+	{
+
+		std::vector<Point2f> BigArea =
+		{
+			Point2f(g_WindowOffset, g_WindowOffset),
+			Point2f(g_WindowOffset, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_Window.width - g_WindowOffset, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset, g_WindowOffset),
+
+		};
+
+		std::vector<Point2f> BigArea2 =
+		{
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+		};
+
+
+		utils::FillPolygon(BigArea);
+		utils::FillPolygon(BigArea2);
+
+		utils::FillRect(Rectf(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset - 96, 198, 96));
+
+	}
+
+
+	if (!m_bHasDiscovered2)
+	{
+
+		std::vector<Point2f> BigArea =
+		{
+			Point2f(g_WindowOffset, g_WindowOffset + 70),
+			Point2f(g_WindowOffset, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_WindowOffset + 70),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset + 70),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset + 70),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset),
+
+		};
+
+
+		std::vector<Point2f> BigArea2 =
+		{
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+		};
+
+		std::vector<Point2f> BigArea3 =
+		{
+			Point2f(g_WindowOffset, g_WindowOffset),
+			Point2f(g_WindowOffset, g_WindowOffset + 70),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset + 70),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset),
+		};
+
+		utils::FillPolygon(BigArea);
+		utils::FillPolygon(BigArea2);
+		utils::FillPolygon(BigArea3);
+
+	}
+
+	if (!m_bHasDiscovered3)
+	{
+
+		std::vector<Point2f> BigArea =
+		{
+			Point2f(g_WindowOffset, g_WindowOffset + 161),
+			Point2f(g_WindowOffset, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_WindowOffset + 161),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset + 161),
+			Point2f(g_Window.width - g_WindowOffset - 198 - 88, g_WindowOffset + 161),
+
+		};
+
+		std::vector<Point2f> BigArea2 =
+		{
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_WindowOffset + 212, g_Window.height - g_WindowOffset - 54),
+		};
+
+		std::vector<Point2f> BigArea3 =
+		{
+			Point2f(g_WindowOffset, g_WindowOffset + 80),
+			Point2f(g_WindowOffset, g_WindowOffset + 80 + 82),
+			Point2f(g_WindowOffset + 480, g_WindowOffset + 80 + 82),
+			Point2f(g_WindowOffset + 480, g_WindowOffset + 80),
+		};
+
+		utils::FillPolygon(BigArea);
+		utils::FillPolygon(BigArea2);
+		utils::FillPolygon(BigArea3);
+
+	}
+
+	if (!m_bHasDiscovered4)
+	{
+
+		std::vector<Point2f> BigArea =
+		{
+			Point2f(g_WindowOffset, g_WindowOffset + 80),
+			Point2f(g_WindowOffset, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240, g_WindowOffset + 80),
+		};
+
+		std::vector<Point2f> BigArea2 =
+		{
+			Point2f(g_WindowOffset + 213, g_WindowOffset + 318),
+			Point2f(g_WindowOffset + 213, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_WindowOffset + 318),
+		};
+
+		std::vector<Point2f> BigArea3 =
+		{
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset - 70),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset - 70),
+		};
+
+		utils::FillPolygon(BigArea);
+		utils::FillPolygon(BigArea2);
+		utils::FillPolygon(BigArea3);
+
+	}
+
+	if (!m_bHasDiscovered5)
+	{
+
+		std::vector<Point2f> BigArea =
+		{
+			Point2f(g_WindowOffset + 124, g_WindowOffset + 144),
+			Point2f(g_WindowOffset + 124, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240, g_WindowOffset + 144),
+		};
+
+		std::vector<Point2f> BigArea2 =
+		{
+			Point2f(g_WindowOffset + 213, g_WindowOffset + 318),
+			Point2f(g_WindowOffset + 213, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_WindowOffset + 318),
+		};
+
+		std::vector<Point2f> BigArea3 =
+		{
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset - 70),
+			Point2f(g_Window.width - g_WindowOffset - 252, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset),
+			Point2f(g_Window.width - g_WindowOffset - 198, g_Window.height - g_WindowOffset - 70),
+		};
+
+		utils::FillPolygon(BigArea);
+		utils::FillPolygon(BigArea2);
+		utils::FillPolygon(BigArea3);
+
+	}
+
+	if (!m_bHasDiscovered6)
+	{
+
+		std::vector<Point2f> BigArea =
+		{
+			Point2f(g_WindowOffset + 124, g_WindowOffset + 144),
+			Point2f(g_WindowOffset + 124, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240, g_WindowOffset + 144),
+		};
+
+		std::vector<Point2f> BigArea2 =
+		{
+			Point2f(g_WindowOffset + 240, g_Window.height - g_WindowOffset - 122),
+			Point2f(g_WindowOffset + 240, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240 + 60, g_Window.height - g_WindowOffset - 54),
+			Point2f(g_WindowOffset + 240 + 60, g_Window.height - g_WindowOffset - 122),
+		};
+
+
+		utils::FillPolygon(BigArea);
+		utils::FillPolygon(BigArea2);
+
+	}
+
+
+
+}
 
 
 void SetLevelTutorialDash()
@@ -288,8 +549,8 @@ void SetLevelTutorialDash()
 	auto& levelManager = LevelManager::GetInstance();
 	entityManager.Reset();
 
-	levelManager.m_uTextInfo = std::make_unique<Texture>("Press Space to Dash",
-		levelManager.GetResourcePath() + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f));
+	levelManager.GetTextInfo() = std::make_unique<Texture>("Press Space to Dash",
+		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
 
@@ -299,12 +560,12 @@ void SetLevelTutorialDash()
 	player->SetMirroringEnabled(false);
 
 
-	entityManager.SpawnSpeedPad(Point2f(400, 480), Vector2f(-1, 0), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 390), Vector2f(-1, 0), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 300), Vector2f(-1, 0), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 210), Vector2f(-1, 0), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 120), Vector2f(-1, 0), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 30), Vector2f(-1, 0), 600.f);
+	entityManager.SpawnSpeedPad(Rectf(400, 390, 90, 80), Vector2f(-1, 0), 500.f);
+	//entityManager.SpawnSpeedPad(Point2f(400, 390), Vector2f(-1, 0), 500.f);
+	entityManager.SpawnSpeedPad(Point2f(400, 300), Vector2f(-1, 0), 500.f);
+	entityManager.SpawnSpeedPad(Point2f(400, 210), Vector2f(-1, 0), 500.f);
+	entityManager.SpawnSpeedPad(Point2f(400, 120), Vector2f(-1, 0), 500.f);
+	entityManager.SpawnSpeedPad(Point2f(400, 30), Vector2f(-1, 0), 500.f);
 
 	entityManager.SpawnWinDoor(Rectf(650, 230, 70, 70), true);
 }
@@ -315,8 +576,8 @@ void SetLevelTutorialShooting()
 	auto& levelManager = LevelManager::GetInstance();
 	entityManager.Reset();
 
-	levelManager.m_uTextInfo = std::make_unique<Texture>("Press LMB to Shoot",
-		levelManager.GetResourcePath() + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f));
+	levelManager.GetTextInfo() = std::make_unique<Texture>("Press LMB to Shoot",
+		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
 
@@ -339,8 +600,8 @@ void SetLevelTutorialMirror()
 	auto& levelManager = LevelManager::GetInstance();
 	entityManager.Reset();
 
-	levelManager.m_uTextInfo = std::make_unique<Texture>("Press RMB to Mirror",
-		levelManager.GetResourcePath() + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f));
+	levelManager.GetTextInfo() = std::make_unique<Texture>("Press RMB to Mirror",
+		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
 
@@ -351,6 +612,7 @@ void SetLevelTutorialMirror()
 
 	entityManager.SpawnDeadlyWall(Rectf(g_WindowOffset + 370, g_WindowOffset, 80, 440), 50);
 
+
 	entityManager.SpawnMirrorArea(Rectf(g_WindowOffset + 66, g_WindowOffset + 288, 150, 150));
 	entityManager.SpawnMirrorArea(Rectf(g_WindowOffset + 570, g_WindowOffset, 150, 150));
 
@@ -359,14 +621,14 @@ void SetLevelTutorialMirror()
 
 
 
-void SetLevel1()
+void SetLevel3()
 {
 	EntityManager& entityManager = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
 	entityManager.Reset();
 
-	levelManager.m_uTextInfo = std::make_unique<Texture>("Level 1",
-		levelManager.GetResourcePath() + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f));
+	levelManager.GetTextInfo() = std::make_unique<Texture>(" ",
+		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
 
@@ -381,14 +643,14 @@ void SetLevel1()
 	entityManager.SpawnWinDoor(Rectf(600, 210, 100, 100), true);
 }
 
-void SetLevel2()
+void SetLevel4()
 {
 	EntityManager& entityManager = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
 	entityManager.Reset();
 
-	levelManager.m_uTextInfo = std::make_unique<Texture>("Level 2",
-		levelManager.GetResourcePath() + std::string("Aovel.ttf"), 26, Color4f(0.f, 0.f, 0.f, 1.f));
+	levelManager.GetTextInfo() = std::make_unique<Texture>(" ",
+		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(65, 420);
 	//levelManager.m_CurrentSpawnPosition = Point2f(765, 420); // Easy Spawn, skips top section
@@ -403,15 +665,15 @@ void SetLevel2()
 
 	// Top Section
 	entityManager.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 350, 700, 10));
-	entityManager.SpawnDeadlyWall(Rectf(100, 440, 120, 30), 100.f);
-	entityManager.SpawnMovingDeadlyWall(Rectf(100, 430, 120, 30), 100.f, Vector2f(0, 1), 2.5f, 20);
-	entityManager.SpawnMovingDeadlyWall(Rectf(100, 410, 120, 30), 100.f, Vector2f(0, 1), 2.5f, 40);
+	entityManager.SpawnDeadlyWall(Rectf(125, 440, 150, 30), 100.f);
+	entityManager.SpawnMovingDeadlyWall(Rectf(125, 410, 150, 30), 100.f, Vector2f(0, 1), 2.5f, 40);
+	entityManager.SpawnMovingDeadlyWall(Rectf(125, 430, 150, 30), 100.f, Vector2f(0, 1), 2.5f, 20);
 
-	entityManager.SpawnDeadlyWall(Rectf(320, 390, 100, 50), 100.f);
-	entityManager.SpawnMovingDeadlyWall(Rectf(320, 405, 100, 50), 100.f, Vector2f(0, -1), 2.5f, 30);
+	entityManager.SpawnDeadlyWall(Rectf(400, 390, 125, 45), 100.f);
+	entityManager.SpawnMovingDeadlyWall(Rectf(400, 410, 125, 40), 100.f, Vector2f(0, -1), 2.f, 35);
 
-	entityManager.SpawnMovingDeadlyWall(Rectf(520, 415, 50, 30), 100.f, Vector2f(0, 1), 2.f, 40);
-	entityManager.SpawnMovingDeadlyWall(Rectf(650, 415, 50, 30), 100.f, Vector2f(0, -1), 2.f, 40);
+	//entityManager.SpawnMovingDeadlyWall(Rectf(550, 415, 50, 30), 100.f, Vector2f(0, 1), 2.f, 40);
+	entityManager.SpawnMovingDeadlyWall(Rectf(650, 415, 50, 30), 100.f, Vector2f(0, -1), 2.5f, 40);
 
 	entityManager.SpawnCheckPoint(Rectf(735, 250, 75, 75));
 
@@ -475,8 +737,177 @@ void SetLevel2()
 	entityManager.SpawnWinDoor(Rectf(g_WindowOffset + 25, g_WindowOffset + 30, width, height), false);
 
 
+}
+
+
+void SetLevel5()
+{
+	EntityManager& em = EntityManager::GetInstance();
+	auto& levelManager = LevelManager::GetInstance();
+	em.Reset();
+
+	levelManager.GetTextInfo() = std::make_unique<Texture>(" ",
+		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
+
+	levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 35.f, g_WindowOffset + 414.f);
+	//levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 35.f, g_WindowOffset + 20.f);
+	//levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 150.f, g_WindowOffset + 95.f);
+
+	auto player = em.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 5);
+	player->m_bIsShootingEnabled = true;
+	player->SetDashingEnabled(true);
+	player->SetMirroringEnabled(true);
+	player->SetBouncinessWalls(0.5f);
+	player->m_DashTime = 0.5f;
+	player->SetDashCoolDown(1.f);
+
+
+	// Mirrors
+	const float mirrorAreaSize{ 40.f };
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 153, g_Window.height - g_WindowOffset - mirrorAreaSize - 2, mirrorAreaSize, mirrorAreaSize));
+	em.SpawnMirrorArea(Rectf(g_Window.width - g_WindowOffset - mirrorAreaSize - 153, g_WindowOffset + 2, mirrorAreaSize, mirrorAreaSize));
+
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 30, g_WindowOffset + 15, mirrorAreaSize, mirrorAreaSize));
+	em.SpawnMirrorArea(Rectf(g_Window.width - g_WindowOffset - mirrorAreaSize - 30, g_Window.height - g_WindowOffset - mirrorAreaSize - 15, mirrorAreaSize, mirrorAreaSize));
+
+
+	// Enemies
+
+
+	// Right
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 690, g_WindowOffset + 199), Vector2f(-1, -1), 0.5f);
+	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 650, g_WindowOffset + 280), 0.4f);
+	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 630, g_WindowOffset + 400), 0.4f);
+
+
+	// Middle Middle
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 289, g_WindowOffset + 179), Vector2f(1, 0), 0.5f);
+
+	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 369, g_WindowOffset + 123), 0.5f);
+	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 343, g_WindowOffset + 260), 0.4f);
+
+
+
+	// Top
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 350, g_WindowOffset + 350), Vector2f(0, 1), 0.6f);
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 253, g_WindowOffset + 410), Vector2f(1, 0), 0.6f);
+
+
+
+	// other things
+
+
+	// Top Left
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 386, 212, 10));
+	em.SpawnWall(Rectf(g_WindowOffset + 202, g_WindowOffset + 386, 10, 55));
+
+
+
+	// Bottom Right
+	em.SpawnWall(Rectf(g_WindowOffset + 588, g_WindowOffset + 70, 118, 10));
+	em.SpawnWall(Rectf(g_WindowOffset + 588, g_WindowOffset + 70, 10, 370));
+
+	em.SpawnEnemy(Point2f(g_WindowOffset + 640, g_WindowOffset + 90));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 654, g_WindowOffset + 130, 132, 10));
+	em.SpawnWall(Rectf(g_WindowOffset + 588, g_WindowOffset + 242, 147, 10));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 690, g_WindowOffset + 337, 96, 10));
+
+	em.SpawnMovingDeadlyWall(Rectf(g_WindowOffset + 622, g_WindowOffset + 337, 45, 10), 100.f, Vector2f(1, 0), 1.f, 44);
+
+
+
+	// Bottom Left
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 70, 490, 10));
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 280, g_WindowOffset + 70, 180, 5), 50.f);
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 100, g_WindowOffset, 90, 70), Vector2f(1, 0), 1000);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 190, g_WindowOffset, 90, 70), Vector2f(1, 0), 1000);
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 280, g_WindowOffset, 90, 70), Vector2f(1, 0), 1000);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 370, g_WindowOffset, 90, 70), Vector2f(1, 0), 1000);
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 280, g_WindowOffset, 90, 70), Vector2f(0, 1), 500);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 370, g_WindowOffset, 90, 70), Vector2f(0, 1), 500);
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 500, g_WindowOffset, 90, 70), Vector2f(1, 0), 10000);
+
+	em.SpawnCheckPoint(Rectf(g_WindowOffset + 500, g_WindowOffset + 80, 80, 80));
+
+
+	em.SpawnWall(Rectf(g_WindowOffset + 480, g_WindowOffset + 70, 10, 90));
+	em.SpawnWall(Rectf(g_WindowOffset + 414, g_WindowOffset + 150, 70, 10));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 480, g_WindowOffset + 242, 108, 10));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 410, g_WindowOffset + 205, 10, 70));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 240, g_WindowOffset + 308, 303, 10));
+	em.SpawnWall(Rectf(g_WindowOffset + 240, g_WindowOffset + 70, 10, 240));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 303, g_WindowOffset + 250, 10, 67));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 534, g_WindowOffset + 309, 10, 61));
+
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 255, g_WindowOffset + 262, 40, 40));
+
+
+	// Left Middle
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 205, g_WindowOffset + 90, 27, 27));
+	em.SpawnMirrorArea(Rectf(g_Window.width - g_WindowOffset - 27 - 205, g_Window.height - g_WindowOffset - 27 - 90, 27, 27));
+
+
+	em.SpawnWall(Rectf(g_WindowOffset + 114, g_WindowOffset + 134, 126, 60));
+	em.SpawnWall(Rectf(g_WindowOffset + 114, g_WindowOffset + 134, 10, 252));
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 134, 66, 10));
+
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset, g_WindowOffset + 80, 56, 54), Vector2f(-1, 0), 1000);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 56, g_WindowOffset + 80, 58, 54), Vector2f(-1, 0), 1000);
+
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 80, 4, 54), 1000);
+
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 192, 20, 56), 1);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 20, g_WindowOffset + 192, 94, 56), Vector2f(-1, 0), 800);
+
+	em.SpawnCheckPoint(Rectf(g_WindowOffset + 135, g_WindowOffset + 88, 37, 37));
+
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 294, 54, 20));
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 54, g_WindowOffset + 252, 60, 64), Vector2f(0, 1), 800);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 54, g_WindowOffset + 316, 60, 68), Vector2f(0, 1), 800);
+
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 54, g_WindowOffset + 380, 60, 6), 1000);
+
+
+	// Middle Top
+	em.SpawnCheckPoint(Rectf(g_WindowOffset + 543, g_WindowOffset + 380, 37, 37));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 300, g_WindowOffset + 318, 10, 80));
+	em.SpawnWall(Rectf(g_WindowOffset + 390, g_WindowOffset + 318, 10, 50));
+
+	em.SpawnWall(Rectf(g_WindowOffset + 480, g_WindowOffset + 318, 10, 30));
+	em.SpawnWall(Rectf(g_WindowOffset + 480, g_WindowOffset + 390, 10, 50));
+
+
+	em.SpawnWinDoor(Rectf(g_WindowOffset + 146, g_WindowOffset + 205, 76, 76), false);
+
+
+	// Discover areas
+	UnlockWall* pUnlockWall{};
+	pUnlockWall = em.SpawnUnlockWall(Rectf(g_WindowOffset + 480, g_WindowOffset + 252, 10, 56));
+	em.SpawnUnlockArea(Rectf(g_WindowOffset + 425, g_WindowOffset + 85, 55, 55), pUnlockWall);
+
+	pUnlockWall = em.SpawnUnlockWall(Rectf(g_WindowOffset + 544, g_WindowOffset + 360, 44, 10));
+	em.SpawnUnlockArea(Rectf(g_WindowOffset + 10, g_WindowOffset + 330, 40, 40), pUnlockWall);
+
+
+	// WinDoor
+	em.SpawnWinDoor(Rectf(g_WindowOffset + 146, g_WindowOffset + 205, 76, 76), false);
 
 
 }
+
 
 

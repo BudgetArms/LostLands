@@ -75,6 +75,15 @@
     <ClCompile Include="Heart.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
+    <ClCompile Include="UnlockWall.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnlockArea.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TurretEnemy.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -132,6 +141,15 @@
       <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="Heart.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnlockArea.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnlockWall.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TurretEnemy.h">
       <Filter>StartFiles</Filter>
     </ClInclude>
   </ItemGroup>
