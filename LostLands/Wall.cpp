@@ -66,6 +66,10 @@ void Wall::HandleCollisions(const Rectf& hitbox, Point2f& outPos, Vector2f& outV
 	if (!utils::IsOverlapping(hitbox, m_Area))
 		return;
 
+	if (!utils::IsOverlapping(m_Area, Circlef(outPos, hitbox.width / 2)))
+		return;
+
+
 	if (outPos.x < m_Area.left)
 	{
 		// hit left wall

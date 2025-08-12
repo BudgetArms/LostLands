@@ -15,6 +15,14 @@ void DeadlyWall::Draw() const
 {
 	utils::SetColor(1, 0, 0, 1.f);
 	utils::FillRect(GetArea());
+
+	if (g_bShowHitboxes)
+	{
+		utils::SetColor(g_HitBoxesColor);
+		utils::DrawRect(GetArea());
+	}
+
+
 }
 
 void DeadlyWall::HandleCollisionsPlayer(Player& player)
@@ -24,10 +32,10 @@ void DeadlyWall::HandleCollisionsPlayer(Player& player)
 
 	const Rectf& playerHitbox{ player.GetHitBox() };
 
-	if (!utils::IsOverlapping(playerHitbox, m_Area))
+	if (!utils::IsOverlapping(playerHitbox, GetArea()))
 		return;
 
-	if (!utils::IsOverlapping(m_Area, Circlef(player.m_Position, playerHitbox.width / 2)))
+	if (!utils::IsOverlapping(GetArea(), Circlef(player.m_Position, playerHitbox.width / 2)))
 		return;
 
 

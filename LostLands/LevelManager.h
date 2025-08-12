@@ -69,27 +69,26 @@ private:
 
 
 	// lvl 2 specific
-	bool m_bHasLvl2DiscoveredRightBottom{ false };
-	bool m_bHasLvl2DiscoveredRightTop{ false };
-	bool m_bHasLvl2DiscoveredMiddleLeft{ false };
-	bool m_bHasLvl2DiscoveredMiddleRight{ false };
-	bool m_bHasLvl2DiscoveredMiddleCenter{ false };
+	bool m_bHasLvl2DiscoveredRightBottom;
+	bool m_bHasLvl2DiscoveredRightTop;
+	bool m_bHasLvl2DiscoveredMiddleLeft;
+	bool m_bHasLvl2DiscoveredMiddleRight;
 
 
 	// lvl 3 specific
-	bool m_bHasDiscoveredMiddleRight{ false };
-	bool m_bHasDiscoveredMiddleCenter{ false };
-	bool m_bHasDiscoveredMiddleMirror{ false };
-	bool m_bHasDiscoveredMiddleLeft{ false };
-	bool m_bHasDiscoveredBottom{ false };
+	bool m_bHasDiscoveredMiddleRight;
+	bool m_bHasDiscoveredMiddleCenter;
+	bool m_bHasDiscoveredMiddleMirror;
+	bool m_bHasDiscoveredMiddleLeft;
+	bool m_bHasDiscoveredBottom;
 
 	// lvl 4 specific
-	bool m_bHasDiscovered1{ false };
-	bool m_bHasDiscovered2{ false };
-	bool m_bHasDiscovered3{ false };
-	bool m_bHasDiscovered4{ false };
-	bool m_bHasDiscovered5{ false };
-	bool m_bHasDiscovered6{ false };
+	bool m_bHasDiscovered1;
+	bool m_bHasDiscovered2;
+	bool m_bHasDiscovered3;
+	bool m_bHasDiscovered4;
+	bool m_bHasDiscovered5;
+	bool m_bHasDiscovered6;
 
 
 };

@@ -68,6 +68,9 @@ void LevelManager::Draw() const
 	m_uTextDash->Draw(Point2f(30.f, g_Window.height - 30.f));
 	m_uTextMirror->Draw(Point2f(210.f, g_Window.height - 30.f));
 
+	if (m_CurrentLevel == 2)
+		Level2DrawThings();
+
 	if (m_CurrentLevel == 3)
 		Level3DrawThings();
 
@@ -110,11 +113,41 @@ void LevelManager::Update(float elapsedSec)
 			if (player->IsDead())
 				m_bLostGame = true;
 
-			if (m_CurrentLevel == 4)
+			if (m_CurrentLevel == 2)
+			{
+
+				if (utils::IsPointInRect(player->m_Position, Rectf(g_WindowOffset + 579, g_WindowOffset + 0, 206, 116)))
+					m_bHasLvl2DiscoveredRightBottom = true;
+
+				if (utils::IsPointInRect(player->m_Position, Rectf(g_WindowOffset + 127, g_WindowOffset + 0, 226, g_SmallWindow.height)))
+				{
+					m_bHasLvl2DiscoveredMiddleLeft = true;
+
+					for (auto& uEnemy : EntityManager::GetInstance().GetEnemies())
+						uEnemy->m_bIsShootingEnabled = true;
+
+				}
+
+				if (utils::IsPointInRect(player->m_Position, Rectf(g_WindowOffset + 363, g_WindowOffset + 0, 70, 48)))
+					m_bHasLvl2DiscoveredMiddleRight = true;
+
+				if (utils::IsPointInRect(player->m_Position, Rectf(g_WindowOffset + 433, g_WindowOffset + 390, 137, 50)))
+					m_bHasLvl2DiscoveredRightTop = true;
+
+			}
+
+			if (m_CurrentLevel == 3)
 			{
 
 				if (utils::IsPointInRect(player->m_Position, Rectf(g_WindowOffset + g_SmallWindow.width - 100, g_WindowOffset + g_SmallWindow.height - 100, 100, 10)))
+				{
 					m_bHasDiscoveredMiddleRight = true;
+
+					for (auto& uEnemy : EntityManager::GetInstance().GetEnemies())
+						uEnemy->m_bIsShootingEnabled = true;
+
+
+				}
 
 				if (utils::IsPointInRect(player->m_Position, Rectf(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70)))
 					m_bHasDiscoveredMiddleMirror = true;
@@ -138,7 +171,7 @@ void LevelManager::Update(float elapsedSec)
 
 
 			}
-			if (m_CurrentLevel == 5)
+			if (m_CurrentLevel == 4)
 			{
 				Rectf lvl5_1{ g_WindowOffset + 590, g_WindowOffset, 70, 70 };
 				Rectf lvl5_2{ g_WindowOffset, g_WindowOffset, 70, 70 };
@@ -148,14 +181,36 @@ void LevelManager::Update(float elapsedSec)
 				Rectf lvl5_6{ g_WindowOffset + 212, g_WindowOffset + 386, 88, 54 };
 
 
-				if (utils::IsPointInRect(player->m_Position, lvl5_1))
-					m_bHasDiscovered1 = true;
+				if (!m_bHasDiscovered1)
+				{
+					if (utils::IsPointInRect(player->m_Position, lvl5_1))
+					{
+						m_bHasDiscovered1 = true;
+						for (auto& uEnemy : EntityManager::GetInstance().GetEnemies())
+						{
+							if (utils::IsOverlapping(uEnemy->GetHitBox(), Rectf(g_WindowOffset + 590, g_WindowOffset, 400, g_SmallWindow.height)))
+								uEnemy->m_bIsShootingEnabled = true;
+
+						}
+
+					}
+				}
 
 				if (utils::IsPointInRect(player->m_Position, lvl5_2))
 					m_bHasDiscovered2 = true;
 
-				if (utils::IsPointInRect(player->m_Position, lvl5_3))
-					m_bHasDiscovered3 = true;
+				if (!m_bHasDiscovered3)
+				{
+					if (utils::IsPointInRect(player->m_Position, lvl5_3))
+					{
+						m_bHasDiscovered3 = true;
+						EntityManager::GetInstance().GetPlayer()->m_Velocity = {};
+
+						for (auto& uEnemy : EntityManager::GetInstance().GetEnemies())
+							uEnemy->m_bIsShootingEnabled = true;
+
+					}
+				}
 
 				if (utils::IsPointInRect(player->m_Position, lvl5_4))
 					m_bHasDiscovered4 = true;
@@ -213,7 +268,6 @@ void LevelManager::SetLevel(int level)
 	m_bHasLvl2DiscoveredRightTop = false;
 	m_bHasLvl2DiscoveredMiddleLeft = false;
 	m_bHasLvl2DiscoveredMiddleRight = false;
-	m_bHasLvl2DiscoveredMiddleCenter = false;
 
 
 	m_bHasDiscoveredMiddleRight = false;
@@ -305,42 +359,32 @@ void LevelManager::Level2DrawThings() const
 	if (m_CurrentLevel != 2)
 		return;
 
-	//utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
+	utils::SetColor(m_HiddenColor);
 
-	if (!m_bHasDiscoveredMiddleRight)
+	if (!m_bHasLvl2DiscoveredRightBottom)
 	{
-		utils::SetColor(0, 0, 0.2f);
-		utils::FillRect(g_WindowOffset + 370, g_WindowOffset + 100, 416, 250);
+		utils::FillRect(g_WindowOffset + 127, g_WindowOffset + 0, g_SmallWindow.width - 127, g_SmallWindow.height);
 	}
 
-	if (!m_bHasDiscoveredMiddleMirror)
+	if (!m_bHasLvl2DiscoveredMiddleLeft)
 	{
-		utils::SetColor(0, 0, 0.2f);
-		utils::FillRect(g_WindowOffset + 610, g_WindowOffset + 100, 80, 80);
+		utils::FillRect(g_WindowOffset + 127, g_WindowOffset + 0, 307, g_SmallWindow.height);
 	}
 
-	if (!m_bHasDiscoveredMiddleCenter)
+	if (!m_bHasLvl2DiscoveredMiddleRight)
 	{
-		utils::SetColor(0, 0, 0.2f);
-		utils::FillRect(g_WindowOffset + 70, g_WindowOffset + 170, 300, 180);
+		utils::FillRect(g_WindowOffset + 433, g_WindowOffset + 0, 137, g_SmallWindow.height);
+		utils::FillRect(g_WindowOffset + 679, g_WindowOffset + 126, 107, 314);
+		utils::FillRect(g_WindowOffset + 570, g_WindowOffset + 296, 10, 144);
 	}
 
-	if (!m_bHasDiscoveredMiddleLeft)
+	if (!m_bHasLvl2DiscoveredRightTop)
 	{
-		utils::SetColor(0, 0, 0.2f);
-		utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 470, 70);
-		utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 70, 250);
+		utils::FillRect(g_WindowOffset + 433, g_WindowOffset + 390, 353, 50);
+		utils::FillRect(g_WindowOffset + 580, g_WindowOffset + 296, 206, 144);
+		utils::FillRect(g_WindowOffset + 679, g_WindowOffset + 126, 107, 314);
+
 	}
-
-
-	if (!m_bHasDiscoveredBottom)
-	{
-		utils::SetColor(0, 0, 0.2f);
-		utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, 100);
-		utils::FillRect(g_WindowOffset + 700, g_WindowOffset, 86, 180);
-	}
-
-
 
 }
 
@@ -356,11 +400,6 @@ void LevelManager::Level3DrawThings() const
 
 
 	m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
-	//utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
-
-	// hitlighting specific area
-	utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
-	utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
 
 	utils::SetColor(m_HiddenColor);
 
@@ -472,7 +511,6 @@ void LevelManager::Level4DrawThings() const
 
 	if (!m_bHasDiscovered3)
 	{
-
 		std::vector<Point2f> BigArea =
 		{
 			Point2f(g_WindowOffset, g_WindowOffset + 161),
@@ -509,7 +547,6 @@ void LevelManager::Level4DrawThings() const
 
 	if (!m_bHasDiscovered4)
 	{
-
 		std::vector<Point2f> BigArea =
 		{
 			Point2f(g_WindowOffset, g_WindowOffset + 80),
@@ -744,6 +781,10 @@ void SetLevelTutorialMirror()
 	em.SpawnWinDoor(Rectf(g_WindowOffset + 698, g_WindowOffset + 143, 70, 70), true);
 
 
+	for (auto& uEnemy : EntityManager::GetInstance().GetEnemies())
+		uEnemy->m_bIsShootingEnabled = false;
+
+
 }
 
 
@@ -802,6 +843,9 @@ void SetLevel3()
 	em.SpawnMirrorArea(Rectf(140, 310, 40, 40));
 
 
+	auto pWall = em.SpawnUnlockWall(Rectf(g_WindowOffset + 610, g_WindowOffset + 180, 80, 10));
+	em.SpawnUnlockArea(Rectf(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70), pWall);
+
 
 	// Middle Left Section
 	em.SpawnWall(Rectf(100, 200, 410, 10));
@@ -841,6 +885,9 @@ void SetLevel3()
 	em.SpawnWinDoor(Rectf(g_WindowOffset + 25, g_WindowOffset + 30, width, height), false);
 
 
+	for (auto& uEnemy : em.GetEnemies())
+		uEnemy->m_bIsShootingEnabled = false;
+
 }
 
 
@@ -879,7 +926,7 @@ void SetLevel4()
 
 
 	// Right
-	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 690, g_WindowOffset + 199), Vector2f(-1, -1), 0.5f);
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 690, g_WindowOffset + 199), Vector2f(-1, -1), 0.2f);
 	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 650, g_WindowOffset + 280), 0.4f);
 	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 630, g_WindowOffset + 400), 0.4f);
 
@@ -964,23 +1011,23 @@ void SetLevel4()
 
 	em.SpawnWall(Rectf(g_WindowOffset + 114, g_WindowOffset + 134, 126, 60));
 	em.SpawnWall(Rectf(g_WindowOffset + 114, g_WindowOffset + 134, 10, 252));
-	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 134, 66, 10));
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 134, 50, 10));
 
 
-	em.SpawnSpeedPad(Rectf(g_WindowOffset, g_WindowOffset + 80, 56, 54), Vector2f(-1, 0), 1000);
-	em.SpawnSpeedPad(Rectf(g_WindowOffset + 56, g_WindowOffset + 80, 58, 54), Vector2f(-1, 0), 1000);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset, g_WindowOffset + 80, 56, 54), Vector2f(-1, 0), 200);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 56, g_WindowOffset + 80, 58, 54), Vector2f(-1, 0), 200);
 
 	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 80, 4, 54), 1000);
 
-	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 182, 20, 50), 1);
-	em.SpawnSpeedPad(Rectf(g_WindowOffset + 20, g_WindowOffset + 182, 94, 60), Vector2f(-1, 0), 500);
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 152, 15, 70), 50);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 15, g_WindowOffset + 152, 99, 70), Vector2f(-1, 0), 500);
 
 	em.SpawnCheckPoint(Rectf(g_WindowOffset + 135, g_WindowOffset + 88, 37, 37));
 
-	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 294, 54, 20));
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 294, 54, 10));
 
-	em.SpawnSpeedPad(Rectf(g_WindowOffset + 54, g_WindowOffset + 252, 60, 64), Vector2f(0, 1), 800);
-	em.SpawnSpeedPad(Rectf(g_WindowOffset + 54, g_WindowOffset + 316, 60, 68), Vector2f(0, 1), 800);
+	//em.SpawnSpeedPad(Rectf(g_WindowOffset + 54, g_WindowOffset + 252, 60, 64), Vector2f(0, 1), 200);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 54, g_WindowOffset + 286, 60, 90), Vector2f(0, 1), 300);
 
 	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 54, g_WindowOffset + 380, 60, 6), 1000);
 
