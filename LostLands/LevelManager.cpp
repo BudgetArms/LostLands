@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "WinDoor.h"
 #include "CheckPoint.h"
+#include "Wall.h"
 
 
 void SetLevelTutorialDash();
@@ -15,7 +16,6 @@ void SetLevelTutorialShooting();
 void SetLevelTutorialMirror();
 void SetLevel3();
 void SetLevel4();
-void SetLevel5();
 
 
 LevelManager::LevelManager() :
@@ -39,7 +39,6 @@ LevelManager::LevelManager() :
 	m_ArrLoadLevel.push_back(&SetLevelTutorialMirror);
 	m_ArrLoadLevel.push_back(&SetLevel3);
 	m_ArrLoadLevel.push_back(&SetLevel4);
-	m_ArrLoadLevel.push_back(&SetLevel5);
 
 	m_NrOfLevels = static_cast<int>(m_ArrLoadLevel.size());
 
@@ -69,11 +68,11 @@ void LevelManager::Draw() const
 	m_uTextDash->Draw(Point2f(30.f, g_Window.height - 30.f));
 	m_uTextMirror->Draw(Point2f(210.f, g_Window.height - 30.f));
 
+	if (m_CurrentLevel == 3)
+		Level3DrawThings();
+
 	if (m_CurrentLevel == 4)
 		Level4DrawThings();
-
-	if (m_CurrentLevel == 5)
-		Level5DrawThings();
 
 
 	if (!m_bWonGame && !m_bLostGame)
@@ -197,7 +196,8 @@ void LevelManager::SkipLevel()
 void LevelManager::SetLevel(int level)
 {
 	std::cout << "Setting Level: " << level << "\n";
-	EntityManager::GetInstance().Reset();
+	auto& em = EntityManager::GetInstance();
+	em.Reset();
 	m_CurrentLevel = level;
 
 	const std::string levelNameText{ "Level " + std::to_string(m_CurrentLevel) };
@@ -206,6 +206,15 @@ void LevelManager::SetLevel(int level)
 
 	m_bWonGame = false;
 	m_bLostGame = false;
+
+
+
+	m_bHasLvl2DiscoveredRightBottom = false;
+	m_bHasLvl2DiscoveredRightTop = false;
+	m_bHasLvl2DiscoveredMiddleLeft = false;
+	m_bHasLvl2DiscoveredMiddleRight = false;
+	m_bHasLvl2DiscoveredMiddleCenter = false;
+
 
 	m_bHasDiscoveredMiddleRight = false;
 	m_bHasDiscoveredMiddleCenter = false;
@@ -235,6 +244,24 @@ void LevelManager::SetLevel(int level)
 	// reset the current level
 	m_uTextInfo = nullptr;
 	m_ArrLoadLevel[m_CurrentLevel]();
+	Wall* pWall;
+
+	// Left Wall
+	pWall = em.SpawnWall(Rectf(0, 0, g_WindowOffset, g_Window.height));
+	pWall->m_bRenderWall = false;
+
+	// Top Wall
+	pWall = em.SpawnWall(Rectf(0, g_Window.height - g_WindowOffset, g_Window.width, g_WindowOffset));
+	pWall->m_bRenderWall = false;
+
+	// Right Wall
+	pWall = em.SpawnWall(Rectf(g_Window.width - g_WindowOffset, 0, g_WindowOffset, g_Window.height));
+	pWall->m_bRenderWall = false;
+
+	// Bottom Wall
+	pWall = em.SpawnWall(Rectf(0, 0, g_Window.width, g_WindowOffset));
+	pWall->m_bRenderWall = false;
+
 
 }
 
@@ -252,11 +279,11 @@ void LevelManager::ResetLevel()
 
 bool LevelManager::HasPlayerFinishedLevel() const
 {
-	auto& entityManager = EntityManager::GetInstance();
-	const auto& player = entityManager.GetPlayer();
+	auto& em = EntityManager::GetInstance();
+	const auto& player = em.GetPlayer();
 
 	bool isOverlapping{ false };
-	for (auto& uWinDoor : entityManager.GetWinDoors())
+	for (auto& uWinDoor : em.GetWinDoors())
 	{
 		if (uWinDoor->IsActive())
 		{
@@ -273,23 +300,12 @@ bool LevelManager::HasPlayerFinishedLevel() const
 
 
 
-void LevelManager::Level4DrawThings() const
+void LevelManager::Level2DrawThings() const
 {
-	if (m_CurrentLevel != 4)
+	if (m_CurrentLevel != 2)
 		return;
 
-	// to hide the secret mirror (even if you win the game)
-	// nvm it blocks the player
-	//utils::SetColor(0, 0, 0, 1.f);
-	//utils::FillRect(Rectf(531, 42, 90, 55));
-
-
-	m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
 	//utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
-
-	// hitlighting specific area
-	utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
-	utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
 
 	if (!m_bHasDiscoveredMiddleRight)
 	{
@@ -328,15 +344,61 @@ void LevelManager::Level4DrawThings() const
 
 }
 
-void LevelManager::Level5DrawThings() const
+void LevelManager::Level3DrawThings() const
 {
-	if (m_CurrentLevel != 5)
+	if (m_CurrentLevel != 3)
+		return;
+
+	// to hide the secret mirror (even if you win the game)
+	// nvm it blocks the player
+	//utils::SetColor(0, 0, 0, 1.f);
+	//utils::FillRect(Rectf(531, 42, 90, 55));
+
+
+	m_uTextLevel4->Draw(Point2f(390, g_WindowOffset - 10));
+	//utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, g_SmallWindow.height - 200);
+
+	// hitlighting specific area
+	utils::SetColor(1.1f, 1.f, 0.f, 0.2f);
+	utils::FillRect(g_WindowOffset + 480, g_WindowOffset + 110, 120, 70);
+
+	utils::SetColor(m_HiddenColor);
+
+	if (!m_bHasDiscoveredMiddleRight)
+		utils::FillRect(g_WindowOffset + 370, g_WindowOffset + 100, 416, 250);
+
+	if (!m_bHasDiscoveredMiddleMirror)
+		utils::FillRect(g_WindowOffset + 610, g_WindowOffset + 100, 80, 80);
+
+	if (!m_bHasDiscoveredMiddleCenter)
+		utils::FillRect(g_WindowOffset + 70, g_WindowOffset + 170, 300, 180);
+
+	if (!m_bHasDiscoveredMiddleLeft)
+	{
+		utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 470, 70);
+		utils::FillRect(g_WindowOffset, g_WindowOffset + 100, 70, 250);
+	}
+
+
+	if (!m_bHasDiscoveredBottom)
+	{
+		utils::FillRect(g_WindowOffset, g_WindowOffset, g_SmallWindow.width, 100);
+		utils::FillRect(g_WindowOffset + 700, g_WindowOffset, 86, 180);
+	}
+
+
+
+}
+
+void LevelManager::Level4DrawThings() const
+{
+	if (m_CurrentLevel != 4)
 		return;
 
 	m_uTextLevel5->Draw(Point2f(160, 354));
 
 
-	utils::SetColor(0, 0, 0.2f);
+	utils::SetColor(m_HiddenColor);
 
 	//return;
 	if (!m_bHasDiscovered1)
@@ -545,109 +607,151 @@ void LevelManager::Level5DrawThings() const
 
 void SetLevelTutorialDash()
 {
-	auto& entityManager = EntityManager::GetInstance();
+	auto& em = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
-	entityManager.Reset();
+	em.Reset();
 
 	levelManager.GetTextInfo() = std::make_unique<Texture>("Press Space to Dash",
 		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
 
-	auto player = entityManager.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 1);
+	auto player = em.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 1);
 	player->m_bIsShootingEnabled = false;
 	player->SetDashingEnabled(true);
 	player->SetMirroringEnabled(false);
 
 
-	entityManager.SpawnSpeedPad(Rectf(400, 390, 90, 80), Vector2f(-1, 0), 500.f);
-	//entityManager.SpawnSpeedPad(Point2f(400, 390), Vector2f(-1, 0), 500.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 300), Vector2f(-1, 0), 500.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 210), Vector2f(-1, 0), 500.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 120), Vector2f(-1, 0), 500.f);
-	entityManager.SpawnSpeedPad(Point2f(400, 30), Vector2f(-1, 0), 500.f);
+	em.SpawnSpeedPad(Rectf(400, 390, 90, 80), Vector2f(-1, 0), 500.f);
+	em.SpawnSpeedPad(Point2f(400, 300), Vector2f(-1, 0), 500.f);
+	em.SpawnSpeedPad(Point2f(400, 210), Vector2f(-1, 0), 500.f);
+	em.SpawnSpeedPad(Point2f(400, 120), Vector2f(-1, 0), 500.f);
+	em.SpawnSpeedPad(Point2f(400, 30), Vector2f(-1, 0), 500.f);
 
-	entityManager.SpawnWinDoor(Rectf(650, 230, 70, 70), true);
+	em.SpawnWinDoor(Rectf(650, 230, 70, 70), true);
 }
 
 void SetLevelTutorialShooting()
 {
-	EntityManager& entityManager = EntityManager::GetInstance();
+	EntityManager& em = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
-	entityManager.Reset();
+	em.Reset();
 
 	levelManager.GetTextInfo() = std::make_unique<Texture>("Press LMB to Shoot",
 		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
 	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
 
-	auto player = entityManager.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 2);
+	auto player = em.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 2);
 	player->m_bIsShootingEnabled = true;
 	player->SetDashingEnabled(true);
 	player->SetMirroringEnabled(false);
 
-	entityManager.SpawnShootingEnemy(Point2f(400, 400), 0.5f);
-	entityManager.SpawnEnemy(Point2f(400, 300));
-	entityManager.SpawnEnemy(Point2f(400, 200));
-	entityManager.SpawnShootingEnemy(Point2f(400, 100), 0.8f);
 
-	entityManager.SpawnWinDoor(Rectf(600, 210, 100, 100), true);
+	em.SpawnWall(Rectf(g_WindowOffset + 300, g_WindowOffset + 100, 10, 100));
+	em.SpawnWall(Rectf(g_WindowOffset + 200, g_WindowOffset + 250, 10, 100));
+
+	em.SpawnEnemy(Point2f(g_WindowOffset + 370, g_WindowOffset + 170));
+	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 370, g_WindowOffset + 370), 0.5f);
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 400, g_WindowOffset + 70), Vector2f(-0.8f, -1), 1.f);
+
+
+	// WinDoor
+	em.SpawnWinDoor(Rectf(g_WindowOffset + 570, g_WindowOffset + 180, 100, 100), true);
 }
 
 void SetLevelTutorialMirror()
 {
-	EntityManager& entityManager = EntityManager::GetInstance();
+	EntityManager& em = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
-	entityManager.Reset();
+	em.Reset();
 
 	levelManager.GetTextInfo() = std::make_unique<Texture>("Press RMB to Mirror",
 		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
 
-	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
+	levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 58, g_WindowOffset + 80);
+	//levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 450, g_WindowOffset + 20);
 
-	auto player = entityManager.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 1);
+	auto player = em.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 3);
 	player->m_bIsShootingEnabled = true;
 	player->SetDashingEnabled(true);
 	player->SetMirroringEnabled(true);
+	player->SetBouncinessWalls(0.1f);
 
-	entityManager.SpawnDeadlyWall(Rectf(g_WindowOffset + 370, g_WindowOffset, 80, 440), 50);
+	static float wallThickness{ 10.f };
+
+	// Left part
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 28, g_WindowOffset + 352, 60, 60));
+	em.SpawnWall(Rectf(g_WindowOffset + 117, g_WindowOffset + 0, wallThickness, g_SmallWindow.height));
 
 
-	entityManager.SpawnMirrorArea(Rectf(g_WindowOffset + 66, g_WindowOffset + 288, 150, 150));
-	entityManager.SpawnMirrorArea(Rectf(g_WindowOffset + 570, g_WindowOffset, 150, 150));
+	// Left Middle Part
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 134, g_WindowOffset + 181, 55, 55));
 
-	entityManager.SpawnWinDoor(Rectf(g_WindowOffset + 620, g_WindowOffset + 200, 70, 70), true);
+	em.SpawnWall(Rectf(g_WindowOffset + 117, g_WindowOffset + 90, 115, wallThickness));
+	em.SpawnWall(Rectf(g_WindowOffset + 117, g_WindowOffset + 160, 143, wallThickness));
+	em.SpawnWall(Rectf(g_WindowOffset + 117, g_WindowOffset + 247, 138, wallThickness));
+
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 353, g_WindowOffset + 48, 80, 344), 100.f);
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 353, g_WindowOffset + 0, wallThickness, 48), 100.f);
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 423, g_WindowOffset + g_SmallWindow.height - 48, wallThickness, 48), 100.f);
+
+	auto pTopUnlockableWall = em.SpawnUnlockWall(Rectf(g_WindowOffset + 353, g_WindowOffset + g_SmallWindow.height - 48, wallThickness, 48));
+	auto pBottomUnlockableWall = em.SpawnUnlockWall(Rectf(g_WindowOffset + 423, g_WindowOffset + 0, wallThickness, 48));
+
+	em.SpawnUnlockArea(Rectf(g_WindowOffset + 143, g_WindowOffset + 380, 45, 45), pTopUnlockableWall);
+	em.SpawnUnlockArea(Rectf(g_WindowOffset + 143, g_WindowOffset + 13, 62, 62), pBottomUnlockableWall);
+
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 374, g_WindowOffset + 6, 37, 37));
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 374, g_WindowOffset + g_SmallWindow.height - 37 - 6, 37, 37));
+
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 203, g_WindowOffset + 38), Vector2f(1, 1), 2.f);
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 176, g_WindowOffset + 296), Vector2f(1, 0), 1.5f);
+	em.SpawnTurretEnemy(Point2f(g_WindowOffset + 203, g_WindowOffset + 370), Vector2f(1, -1), 2.4f);
+
+	em.SpawnShootingEnemy(Point2f(g_WindowOffset + 161, g_WindowOffset + 131), 1.f);
+
+
+
+	// Right Middle
+	em.SpawnWall(Rectf(g_WindowOffset + 570, g_WindowOffset + 0, wallThickness, g_SmallWindow.height - 38));
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 433, g_WindowOffset + 80, 137, 100), Vector2f(0, -1), 430);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 433, g_WindowOffset + 260, 137, 100), Vector2f(-1, 0), 375);
+
+	em.SpawnCheckPoint(Rectf(g_WindowOffset + 470, g_WindowOffset + 8, 60, 60));
+
+
+	// Right Bottom
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 698, g_WindowOffset + 28, 60, 60));
+	em.SpawnMirrorArea(Rectf(g_WindowOffset + 597, g_WindowOffset + 204, 55, 55));
+
+	em.SpawnCheckPoint(Rectf(g_WindowOffset + 596, g_WindowOffset + 28, 60, 60));
+
+
+	// Right Top
+	em.SpawnWall(Rectf(g_WindowOffset + 570, g_WindowOffset + 0, wallThickness, g_SmallWindow.height - 38));
+	em.SpawnWall(Rectf(g_WindowOffset + 669, g_WindowOffset + 116, wallThickness, 257));
+	em.SpawnWall(Rectf(g_WindowOffset + 669, g_WindowOffset + 116, 117, wallThickness));
+
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset + 580, g_WindowOffset + 286, 89, wallThickness), 100);
+
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 580, g_WindowOffset + 296, 89, 144), Vector2f(0, -1), 500);
+
+
+
+	// WinDoor
+	em.SpawnWinDoor(Rectf(g_WindowOffset + 698, g_WindowOffset + 143, 70, 70), true);
+
+
 }
-
 
 
 void SetLevel3()
 {
-	EntityManager& entityManager = EntityManager::GetInstance();
+	EntityManager& em = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
-	entityManager.Reset();
-
-	levelManager.GetTextInfo() = std::make_unique<Texture>(" ",
-		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
-
-	levelManager.m_CurrentSpawnPosition = Point2f(100, 250);
-
-	auto player = entityManager.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 2);
-	player->m_bIsShootingEnabled = true;
-	player->SetDashingEnabled(true);
-	player->SetMirroringEnabled(true);
-
-	entityManager.SpawnShootingEnemy(Point2f(490, 200));
-	entityManager.SpawnShootingEnemy(Point2f(490, 280), 0.7f);
-
-	entityManager.SpawnWinDoor(Rectf(600, 210, 100, 100), true);
-}
-
-void SetLevel4()
-{
-	EntityManager& entityManager = EntityManager::GetInstance();
-	auto& levelManager = LevelManager::GetInstance();
-	entityManager.Reset();
+	em.Reset();
 
 	levelManager.GetTextInfo() = std::make_unique<Texture>(" ",
 		levelManager.m_FontPath, 26, Color4f(0.f, 0.f, 0.f, 1.f));
@@ -655,7 +759,7 @@ void SetLevel4()
 	levelManager.m_CurrentSpawnPosition = Point2f(65, 420);
 	//levelManager.m_CurrentSpawnPosition = Point2f(765, 420); // Easy Spawn, skips top section
 
-	auto player = entityManager.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 3);
+	auto player = em.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 4);
 	player->m_bIsShootingEnabled = true;
 	player->SetDashingEnabled(true);
 	player->SetMirroringEnabled(true);
@@ -664,83 +768,83 @@ void SetLevel4()
 
 
 	// Top Section
-	entityManager.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 350, 700, 10));
-	entityManager.SpawnDeadlyWall(Rectf(125, 440, 150, 30), 100.f);
-	entityManager.SpawnMovingDeadlyWall(Rectf(125, 410, 150, 30), 100.f, Vector2f(0, 1), 2.5f, 40);
-	entityManager.SpawnMovingDeadlyWall(Rectf(125, 430, 150, 30), 100.f, Vector2f(0, 1), 2.5f, 20);
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 350, 700, 10));
+	em.SpawnDeadlyWall(Rectf(125, 440, 150, 30), 100.f);
+	em.SpawnMovingDeadlyWall(Rectf(125, 410, 150, 30), 100.f, Vector2f(0, 1), 2.5f, 40);
+	em.SpawnMovingDeadlyWall(Rectf(125, 430, 150, 30), 100.f, Vector2f(0, 1), 2.5f, 20);
 
-	entityManager.SpawnDeadlyWall(Rectf(400, 390, 125, 45), 100.f);
-	entityManager.SpawnMovingDeadlyWall(Rectf(400, 410, 125, 40), 100.f, Vector2f(0, -1), 2.f, 35);
+	em.SpawnDeadlyWall(Rectf(400, 390, 125, 45), 100.f);
+	em.SpawnMovingDeadlyWall(Rectf(400, 410, 125, 40), 100.f, Vector2f(0, -1), 2.f, 35);
 
-	//entityManager.SpawnMovingDeadlyWall(Rectf(550, 415, 50, 30), 100.f, Vector2f(0, 1), 2.f, 40);
-	entityManager.SpawnMovingDeadlyWall(Rectf(650, 415, 50, 30), 100.f, Vector2f(0, -1), 2.5f, 40);
+	//em.SpawnMovingDeadlyWall(Rectf(550, 415, 50, 30), 100.f, Vector2f(0, 1), 2.f, 40);
+	em.SpawnMovingDeadlyWall(Rectf(650, 415, 50, 30), 100.f, Vector2f(0, -1), 2.5f, 40);
 
-	entityManager.SpawnCheckPoint(Rectf(735, 250, 75, 75));
+	em.SpawnCheckPoint(Rectf(735, 250, 75, 75));
 
 
 
 	// Middle Right Section
-	entityManager.SpawnWall(Rectf(720, 300, 10, 90));
-	entityManager.SpawnWall(Rectf(720, 180, 10, 30));
-	entityManager.SpawnWall(Rectf(720, 210, 97, 10));
-	entityManager.SpawnWall(Rectf(720, 70, 10, 110));
+	em.SpawnWall(Rectf(720, 300, 10, 90));
+	em.SpawnWall(Rectf(720, 180, 10, 30));
+	em.SpawnWall(Rectf(720, 210, 97, 10));
+	em.SpawnWall(Rectf(720, 70, 10, 110));
 
-	entityManager.SpawnDeadlyWall(Rectf(630, 130, 10, 170), 50.f);
+	em.SpawnDeadlyWall(Rectf(630, 130, 10, 170), 50.f);
 
-	entityManager.SpawnWall(Rectf(460, 300, 115, 10));
-	entityManager.SpawnWall(Rectf(400, 200, 10, 180));
+	em.SpawnWall(Rectf(460, 300, 115, 10));
+	em.SpawnWall(Rectf(400, 200, 10, 180));
 
-	entityManager.SpawnShootingEnemy(Point2f(555, 250), 0.8f);
-	entityManager.SpawnShootingEnemy(Point2f(495, 250), 0.6f);
-	entityManager.SpawnShootingEnemy(Point2f(530, 175), 1.f);
+	em.SpawnShootingEnemy(Point2f(555, 250), 0.8f);
+	em.SpawnShootingEnemy(Point2f(495, 250), 0.6f);
+	em.SpawnShootingEnemy(Point2f(530, 175), 1.f);
 
-	entityManager.SpawnMirrorArea(Rectf(660, 160, 40, 30));
-	entityManager.SpawnMirrorArea(Rectf(140, 310, 40, 40));
+	em.SpawnMirrorArea(Rectf(660, 160, 40, 30));
+	em.SpawnMirrorArea(Rectf(140, 310, 40, 40));
 
 
 
 	// Middle Left Section
-	entityManager.SpawnWall(Rectf(100, 200, 410, 10));
-	entityManager.SpawnWall(Rectf(100, 200, 10, 180));
-	entityManager.SpawnWall(Rectf(500, 130, 10, 70));
-	entityManager.SpawnWall(Rectf(65, 200, 200, 10));
+	em.SpawnWall(Rectf(100, 200, 410, 10));
+	em.SpawnWall(Rectf(100, 200, 10, 180));
+	em.SpawnWall(Rectf(500, 130, 10, 70));
+	em.SpawnWall(Rectf(65, 200, 200, 10));
 
-	entityManager.SpawnSpeedPad(Point2f(200, 290), Vector2f(-1, 0), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(200, 200), Vector2f(-1, 0), 600.f);
+	em.SpawnSpeedPad(Point2f(200, 290), Vector2f(-1, 0), 600.f);
+	em.SpawnSpeedPad(Point2f(200, 200), Vector2f(-1, 0), 600.f);
 
-	entityManager.SpawnSpeedPad(Point2f(200, 120), Vector2f(-1, -1), 600.f);
-	entityManager.SpawnSpeedPad(Point2f(290, 120), Vector2f(-1, 1), 600.f);
+	em.SpawnSpeedPad(Point2f(200, 120), Vector2f(-1, -1), 600.f);
+	em.SpawnSpeedPad(Point2f(290, 120), Vector2f(-1, 1), 600.f);
 
-	entityManager.SpawnMirrorArea(Rectf(350, 312, 42, 42));
-	entityManager.SpawnMirrorArea(Rectf(454, 147, 42, 42));
+	em.SpawnMirrorArea(Rectf(350, 312, 42, 42));
+	em.SpawnMirrorArea(Rectf(454, 147, 42, 42));
 
-	entityManager.SpawnEnemy(Point2f(75, 255));
+	em.SpawnEnemy(Point2f(75, 255));
 
-	entityManager.SpawnMirrorArea(Rectf(37, 314, 55, 55));
-	entityManager.SpawnMirrorArea(Rectf(754, 131, 55, 55));
+	em.SpawnMirrorArea(Rectf(37, 314, 55, 55));
+	em.SpawnMirrorArea(Rectf(754, 131, 55, 55));
 
 
 	// Bottom Section
-	entityManager.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 100, 700, 10));
+	em.SpawnWall(Rectf(g_WindowOffset, g_WindowOffset + 100, 700, 10));
 
-	entityManager.SpawnSpeedPad(Point2f(200, g_WindowOffset), Vector2f(1, 0), 400.f);
-	entityManager.SpawnSpeedPad(Point2f(290, g_WindowOffset), Vector2f(-1, 0), 600.f);
-	//entityManager.SpawnMirrorArea(Rectf(g_WindowOffset + 400, g_WindowOffset, 100, 50));
+	em.SpawnSpeedPad(Point2f(200, g_WindowOffset), Vector2f(1, 0), 400.f);
+	em.SpawnSpeedPad(Point2f(290, g_WindowOffset), Vector2f(-1, 0), 600.f);
+	//em.SpawnMirrorArea(Rectf(g_WindowOffset + 400, g_WindowOffset, 100, 50));
 
 	// Hidden Mirror Area Skip
-	entityManager.SpawnMirrorArea(Rectf(531, 42, 90, 55));
+	em.SpawnMirrorArea(Rectf(531, 42, 90, 55));
 
 
 	// winDoor
 	const float width{ 30 };
 	const float height{ 30 };
-	entityManager.SpawnWinDoor(Rectf(g_WindowOffset + 25, g_WindowOffset + 30, width, height), false);
+	em.SpawnWinDoor(Rectf(g_WindowOffset + 25, g_WindowOffset + 30, width, height), false);
 
 
 }
 
 
-void SetLevel5()
+void SetLevel4()
 {
 	EntityManager& em = EntityManager::GetInstance();
 	auto& levelManager = LevelManager::GetInstance();
@@ -868,8 +972,8 @@ void SetLevel5()
 
 	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 80, 4, 54), 1000);
 
-	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 192, 20, 56), 1);
-	em.SpawnSpeedPad(Rectf(g_WindowOffset + 20, g_WindowOffset + 192, 94, 56), Vector2f(-1, 0), 800);
+	em.SpawnDeadlyWall(Rectf(g_WindowOffset, g_WindowOffset + 182, 20, 50), 1);
+	em.SpawnSpeedPad(Rectf(g_WindowOffset + 20, g_WindowOffset + 182, 94, 60), Vector2f(-1, 0), 500);
 
 	em.SpawnCheckPoint(Rectf(g_WindowOffset + 135, g_WindowOffset + 88, 37, 37));
 

@@ -52,6 +52,7 @@ public:
 	UnlockWall* SpawnUnlockWall(const Rectf& area);
 	void SpawnUnlockArea(const Rectf& area, UnlockWall* pUnlockWall);
 
+
 	std::vector<std::unique_ptr<Bullet>>& GetBullets() { return m_Bullets; };
 	std::vector<std::unique_ptr<Character>>& GetEnemies() { return m_Entities; };
 	std::vector<std::unique_ptr<WinDoor>>& GetWinDoors() { return m_WinDoors; };
@@ -85,7 +86,6 @@ private:
 	std::vector<MirrorArea> m_MirrorAreas;
 
 	std::vector<std::unique_ptr<UnlockArea>> m_UnlockAreas;
-	//std::vector<std::unique_ptr<UnlockWall>> m_UnlockWalls;
 
 
 	bool m_bLevelComplete{ false };

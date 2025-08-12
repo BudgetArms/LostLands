@@ -92,9 +92,7 @@ void EntityManager::Update(float elapsedSec)
 
 	// killed all enemies
 	if (m_Entities.empty())
-	{
 		m_bLevelComplete = true;
-	}
 
 
 	HandleBulletCollisions();
@@ -102,7 +100,8 @@ void EntityManager::Update(float elapsedSec)
 	HandleCharacterCollisions();
 
 	for (auto& uWall : m_Walls)
-		uWall->HandleCollisions(*m_Player);
+		uWall->HandleCollisionsPlayer(*m_Player);
+
 	for (auto& uWall : m_Walls)
 		for (auto& uBullet : m_Bullets)
 			uWall->HandleCollisionsBullet(*uBullet);

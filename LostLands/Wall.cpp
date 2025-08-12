@@ -15,71 +15,34 @@ Wall::~Wall() {};
 
 void Wall::Draw() const
 {
+	if (!m_bRenderWall)
+		return;
+
 	utils::SetColor(1, 1, 1, 1.f);
 	utils::FillRect(m_Area);
 }
 
 
-void Wall::HandleCollisions(Player& player)
+void Wall::HandleCollisionsPlayer(Player& player)
 {
 	if (player.IsDead())
 		return;
 
-	const Rectf& playerHitBox{ player.GetHitBox() };
+	const Rectf& playerHitbox{ player.GetHitBox() };
 
 	// aabb
-	if (!utils::IsOverlapping(playerHitBox, m_Area))
+	if (!utils::IsOverlapping(playerHitbox, m_Area))
 		return;
 
-	if (!utils::IsOverlapping(m_Area, Circlef(player.m_Position, playerHitBox.width / 2)))
+	if (!utils::IsOverlapping(m_Area, Circlef(player.m_Position, playerHitbox.width / 2)))
 		return;
 
 
-	Point2f playerPos{ player.m_Position };
-	Vector2f playerVelocity = player.m_Velocity;
+	if (player.IsDashing())
+		HandleCollisions(playerHitbox, player.m_Position, player.m_Velocity, player.GetBouncinessWalls());
+	else
+		HandleCollisions(playerHitbox, player.m_Position, player.m_Velocity, 1.f);
 
-
-	if (playerPos.x < m_Area.left)
-	{
-		// hit left wall
-		playerPos.x = m_Area.left - playerHitBox.width / 2;
-		if (player.IsDashing())
-			playerVelocity.x *= -1;
-		else
-			playerVelocity.x *= -player.GetBouncinessWalls();
-
-	}
-	else if (playerPos.x > m_Area.left + m_Area.width)
-	{
-		// hit right wall
-		playerPos.x = m_Area.left + m_Area.width + playerHitBox.width / 2;
-		if (player.IsDashing())
-			playerVelocity.x *= -1;
-		else
-			playerVelocity.x *= -player.GetBouncinessWalls();
-
-	}
-	else if (playerPos.y > m_Area.bottom + m_Area.height)
-	{
-		// hit top wall
-		playerPos.y = m_Area.bottom + m_Area.height + playerHitBox.height / 2;
-		if (player.IsDashing())
-			playerVelocity.y *= -1;
-		else
-			playerVelocity.y *= -player.GetBouncinessWalls();
-	}
-	else if (playerPos.y < m_Area.bottom)
-	{
-		// hit bottom wall
-		playerPos.y = m_Area.bottom - playerHitBox.height / 2;
-		if (player.IsDashing())
-			playerVelocity.y *= -1;
-		else
-			playerVelocity.y *= -player.GetBouncinessWalls();
-	}
-
-	player.m_Position = playerPos;
-	player.m_Velocity = playerVelocity;
 }
 
 void Wall::HandleCollisionsBullet(Bullet& bullet)
@@ -94,35 +57,48 @@ void Wall::HandleCollisionsBullet(Bullet& bullet)
 		return;
 
 
-	Point2f bulletPos{ bullet.m_Position };
-	Vector2f bulletDirection = bullet.m_Direction;
+	HandleCollisions(bulletHitBox, bullet.m_Position, bullet.m_Direction, 1.f);
 
-	if (bulletPos.x < m_Area.left)
+}
+
+void Wall::HandleCollisions(const Rectf& hitbox, Point2f& outPos, Vector2f& outVelocity, float bouncinessWalls)
+{
+	if (!utils::IsOverlapping(hitbox, m_Area))
+		return;
+
+	if (outPos.x < m_Area.left)
 	{
 		// hit left wall
-		bulletPos.x = m_Area.left + bulletHitBox.width / 2;
-		bulletDirection.x *= -1;
+		outPos.x = m_Area.left - hitbox.width / 2.f - m_OffsetAfterCollisions;
+
+		if (outVelocity.x > 0)
+			outVelocity.x *= -bouncinessWalls;
 	}
-	else if (bulletPos.x > m_Area.left + m_Area.width)
+	else if (outPos.x > m_Area.left + m_Area.width)
 	{
 		// hit right wall
-		bulletPos.x = m_Area.left + m_Area.width - bulletHitBox.width / 2;
-		bulletDirection.x *= -1;
+		outPos.x = m_Area.left + m_Area.width + hitbox.width / 2.f + m_OffsetAfterCollisions;
+
+		if (outVelocity.x < 0)
+			outVelocity.x *= -bouncinessWalls;
 	}
-	else if (bulletPos.y < m_Area.bottom)
+	else if (outPos.y < m_Area.bottom)
 	{
 		// hit bottom wall
-		bulletPos.y = m_Area.bottom + bulletHitBox.height / 2;
-		bulletDirection.y *= -1;
+		outPos.y = m_Area.bottom - hitbox.height / 2.f - m_OffsetAfterCollisions;
+
+		if (outVelocity.y > 0)
+			outVelocity.y *= -bouncinessWalls;
 	}
-	else if (bulletPos.y > m_Area.bottom + m_Area.height)
+	else if (outPos.y > m_Area.bottom + m_Area.height)
 	{
 		// hit top wall
-		bulletPos.y = m_Area.bottom + m_Area.height - bulletHitBox.height / 2;
-		bulletDirection.y *= -1;
+		outPos.y = m_Area.bottom + m_Area.height + hitbox.height / 2.f + m_OffsetAfterCollisions;
+
+		if (outVelocity.y < 0)
+			outVelocity.y *= -bouncinessWalls;
 	}
 
-	bullet.m_Direction = bulletDirection;
 }
 
 

@@ -103,8 +103,6 @@ void Player::Update(float elapsedSec)
 	HandleKeyboardInput(elapsedSec);
 	HandleMouseInput(elapsedSec);
 
-	HandleWallCollisions();
-
 
 	m_Velocity.x = std::clamp<float>(m_Velocity.x, -m_MaxVelocity, m_MaxVelocity);
 	m_Velocity.y = std::clamp<float>(m_Velocity.y, -m_MaxVelocity, m_MaxVelocity);
@@ -139,6 +137,8 @@ void Player::Reset()
 		m_Position = LevelManager::GetInstance().m_CurrentSpawnPosition;
 	}
 
+	m_Velocity = {};
+
 }
 
 void Player::Damage(float damage)
@@ -153,6 +153,7 @@ void Player::Damage(float damage)
 	if (m_bIsDead)
 	{
 		--m_Lives;
+
 		if (!m_Hearts.empty())
 			m_Hearts.pop_back();
 
@@ -239,6 +240,7 @@ void Player::HandleKeyboardInput(float elapsedSec)
 
 	m_Input = m_Input.Normalized();
 
+
 	m_DashTimer -= elapsedSec;
 	if (m_bIsDashing)
 	{
@@ -310,71 +312,14 @@ void Player::Dash()
 	m_DashTimer = m_DashTime + m_DashCooldown;
 
 	// use input, if there is input
-	if (m_Input.Norm() != 0)
+	// else use the last input
+	if (m_Input.Length() != 0)
+	{
 		m_Velocity = m_DashSpeed * m_Input;
-	else if (m_Velocity.Norm() == 0)
+	}
+	else
 		m_Velocity = m_DashSpeed * m_Direction;
 
 }
 
-void Player::HandleWallCollisions()
-{
-	GetHitBox(); // to update hitbox
-	if (!(
-		(m_HitBox.left <= g_SmallWindow.left) ||
-		(m_HitBox.bottom <= g_SmallWindow.bottom) ||
-		(m_HitBox.left + m_HitBox.width >= g_SmallWindow.left + g_SmallWindow.width) ||
-		(m_HitBox.bottom + m_HitBox.height >= g_SmallWindow.bottom + g_SmallWindow.height)
-		))
-		return;
-
-
-
-
-	if (m_HitBox.left <= g_SmallWindow.left)
-	{
-		// hit left wall
-		m_Position.x = g_SmallWindow.left + m_Width / 2;
-
-		if (m_bIsDashing)
-			m_Velocity.x *= -1;
-		else
-			m_Velocity.x *= -m_BouncinessWalls;
-	}
-	else if (m_HitBox.left + m_HitBox.width >= g_SmallWindow.left + g_SmallWindow.width)
-	{
-		// hit right 
-		m_Position.x = g_SmallWindow.left + g_SmallWindow.width - m_Width / 2;
-
-		if (m_bIsDashing)
-			m_Velocity.x *= -1;
-		else
-			m_Velocity.x *= -m_BouncinessWalls;
-
-	}
-	else if (m_HitBox.bottom <= g_SmallWindow.bottom)
-	{
-		// hit bottom wall
-		m_Position.y = g_SmallWindow.bottom + m_Height / 2;
-
-		if (m_bIsDashing)
-			m_Velocity.y *= -1;
-		else
-			m_Velocity.y *= -m_BouncinessWalls;
-	}
-	else if (m_HitBox.bottom + m_HitBox.height >= g_SmallWindow.bottom + g_SmallWindow.height)
-	{
-		// hit top wall
-		m_Position.y = g_SmallWindow.bottom + g_SmallWindow.height - m_Height / 2;
-
-		if (m_bIsDashing)
-			m_Velocity.y *= -1;
-		else
-			m_Velocity.y *= -m_BouncinessWalls;
-	}
-	else
-		std::cout << "fucked\n";
-
-
-}
 

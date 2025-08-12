@@ -43,8 +43,6 @@ private:
 	void Friction(float elapsedSec);
 	void Dash();
 
-	void HandleWallCollisions();
-
 
 	const Point2f m_HeartStartPosition{ 50.f, 2.f };
 	const float m_HeartWidth{ 30.f };

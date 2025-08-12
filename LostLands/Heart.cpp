@@ -14,6 +14,7 @@ void Heart::Draw() const
 	// draw heart
 	utils::SetColor(0.7f, 0.f, 0.f, 1.f);
 
+	//*
 	glTranslatef(m_Position.x, m_Position.y, 0);
 	glScalef(m_Width / 1000.f, m_Width / 1000.f, 0.f);
 
@@ -35,6 +36,8 @@ void Heart::Draw() const
 
 	glScalef(1000.f / m_Width, 1000.f / m_Width, 0.f);
 	glTranslatef(-m_Position.x, -m_Position.y, 0);
+	//*/
+
 }
 
 

@@ -23,8 +23,9 @@ public:
 
 	bool HasPlayerFinishedLevel() const;
 
+	void Level2DrawThings() const;
+	void Level3DrawThings() const;
 	void Level4DrawThings() const;
-	void Level5DrawThings() const;
 
 	std::unique_ptr<Texture>& GetTextInfo() { return m_uTextInfo; };
 
@@ -57,6 +58,7 @@ private:
 	std::vector<std::function<void()>> m_ArrLoadLevel{};
 
 
+	const Color4f m_HiddenColor{ Color4f(0,0,0.2f, 1.f) };
 
 	int m_CurrentLevel{ 0 };
 	int m_NrOfLevels;
@@ -66,14 +68,22 @@ private:
 	bool m_bLostGame{ false };
 
 
-	// lvl 4 specific
+	// lvl 2 specific
+	bool m_bHasLvl2DiscoveredRightBottom{ false };
+	bool m_bHasLvl2DiscoveredRightTop{ false };
+	bool m_bHasLvl2DiscoveredMiddleLeft{ false };
+	bool m_bHasLvl2DiscoveredMiddleRight{ false };
+	bool m_bHasLvl2DiscoveredMiddleCenter{ false };
+
+
+	// lvl 3 specific
 	bool m_bHasDiscoveredMiddleRight{ false };
 	bool m_bHasDiscoveredMiddleCenter{ false };
 	bool m_bHasDiscoveredMiddleMirror{ false };
 	bool m_bHasDiscoveredMiddleLeft{ false };
 	bool m_bHasDiscoveredBottom{ false };
 
-	// lvl 5 specific
+	// lvl 4 specific
 	bool m_bHasDiscovered1{ false };
 	bool m_bHasDiscovered2{ false };
 	bool m_bHasDiscovered3{ false };
