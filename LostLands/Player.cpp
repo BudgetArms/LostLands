@@ -127,7 +127,7 @@ Rectf& Player::GetHitBox()
 void Player::Reset()
 {
 	SetHealth(m_MaxHealth);
-	if (auto pCheckPoint = LevelManager::GetInstance().m_CurrentCheckPoint; pCheckPoint)
+	if (auto pCheckPoint = LevelManager::GetInstance().m_CurrentCheckPoint)
 	{
 		const auto& area = pCheckPoint->GetArea();
 		m_Position = Point2f(area.left + area.width / 2, area.bottom + area.height / 2);

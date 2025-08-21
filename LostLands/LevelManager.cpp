@@ -254,6 +254,7 @@ void LevelManager::SetLevel(int level)
 	auto& em = EntityManager::GetInstance();
 	em.Reset();
 	m_CurrentLevel = level;
+	m_CurrentCheckPoint = nullptr;
 
 	const std::string levelNameText{ "Level " + std::to_string(m_CurrentLevel) };
 	m_uTextLevelName = std::make_unique<Texture>(levelNameText, m_FontPath, m_FontSizeMedium, Color4f(0.f, 0.f, 0.f, 1.f));
@@ -708,6 +709,7 @@ void SetLevelTutorialMirror()
 
 	levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 58, g_WindowOffset + 80);
 	//levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 450, g_WindowOffset + 20);
+	//levelManager.m_CurrentSpawnPosition = Point2f(g_WindowOffset + 720, g_WindowOffset + 350);
 
 	auto player = em.SpawnPlayer(levelManager.m_CurrentSpawnPosition, 3);
 	player->m_bIsShootingEnabled = true;

@@ -147,14 +147,14 @@ void EntityManager::LateUpdate()
 
 void EntityManager::Reset()
 {
-	m_Player.reset();
 	m_Bullets.clear();
 	m_SpeedPads.clear();
 	m_Entities.clear();
 	m_Walls.clear();
+	m_CheckPoints.clear();
+	m_Player.reset();
 	m_WinDoors.clear();
 	m_MirrorAreas.clear();
-	m_CheckPoints.clear();
 	m_UnlockAreas.clear();
 
 	m_bLevelComplete = false;
